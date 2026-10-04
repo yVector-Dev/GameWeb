@@ -1,4 +1,3 @@
-import { getCareer } from '../content/careers';
 import { isPartTime, jobTitle } from '../engine/career';
 import type { GameState } from '../engine/types';
 import type { I18n } from './i18n';
@@ -33,9 +32,4 @@ export function statusLine(game: GameState, i18n: I18n): string {
   if (game.character.age >= 18) return t('status.unemployed');
   if (e.stage === 'dropped') return t('status.dropped');
   return t('status.graduated');
-}
-
-export function careerName(careerId: string, i18n: I18n): string {
-  getCareer(careerId);
-  return i18n.t(`career.${careerId}.name`);
 }

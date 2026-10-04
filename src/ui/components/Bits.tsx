@@ -1,5 +1,5 @@
 import type { Requirement, RequirementStatus } from '../../engine/conditions';
-import type { Delta, LogTone, StatKey } from '../../engine/types';
+import type { Delta, StatKey } from '../../engine/types';
 import { LOCALES, type Locale } from '../../i18n/translate';
 import { useI18n } from '../i18n';
 
@@ -74,10 +74,6 @@ export function Requirements({ items }: { items: RequirementStatus[] }) {
       ))}
     </ul>
   );
-}
-
-export function toneClass(tone: LogTone): string {
-  return `tone--${tone}`;
 }
 
 export function LanguageSelect({ value, onChange, id }: { value: Locale; onChange: (l: Locale) => void; id: string }) {

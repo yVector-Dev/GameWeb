@@ -110,3 +110,15 @@ describe('action budget', () => {
     expect(() => performActivity(s, 'rest')).toThrowError(EngineError);
   });
 });
+
+describe('people', () => {
+  it('avoids repeated first names among living people', () => {
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const s = playLife(seed * 101, 45);
+      const names = [s.character.firstName, ...s.npcs.filter((n) => n.alive).map((n) => n.firstName)];
+      const repeated = names.filter((n, i) => names.indexOf(n) !== i);
+      // Name pools are finite, so rare repeats are tolerated, never many.
+      expect(repeated.length).toBeLessThanOrEqual(1);
+    }
+  });
+});

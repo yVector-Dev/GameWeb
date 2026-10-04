@@ -43,9 +43,15 @@ export function createNpc(state: GameState, rng: Rng, options: NewNpcOptions): N
   let age = Math.max(0, Math.round(options.age));
   // Romance is strictly between adults.
   if ((options.relation === 'partner' || options.relation === 'spouse') && age < 18) age = 18;
+  // Avoid two living people (or the player) sharing a first name.
+  const taken = new Set([state.character.firstName, ...state.npcs.filter((n) => n.alive).map((n) => n.firstName)]);
+  let firstName = isPet ? rng.pick(PET_NAMES) : randomFirstName(rng, gender);
+  for (let i = 0; i < 8 && taken.has(firstName); i++) {
+    firstName = isPet ? rng.pick(PET_NAMES) : randomFirstName(rng, gender);
+  }
   const npc: NPC = {
     id: `n${nextId(state)}`,
-    firstName: isPet ? rng.pick(PET_NAMES) : randomFirstName(rng, gender),
+    firstName,
     lastName: isPet ? '' : (options.lastName ?? randomSurname(rng)),
     gender,
     birthYear: state.year - age,
