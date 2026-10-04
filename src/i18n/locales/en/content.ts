@@ -29,6 +29,118 @@ export default {
       veryHard: 'In {country}, wages buy little, support is scarce and opportunities are hard to find. Life will be tough.',
     },
   },
+  orientation: {
+    straight: "Straight",
+    gay: "Gay",
+    gay_f: "Lesbian",
+    bi: "Bisexual",
+  },
+  club: {
+    name: "Go to a nightclub",
+    desc: "Dance, drink, meet people. Maybe go home with someone.",
+    info: "Costs {amount} · one action",
+    hookup: "You met {name} on the dance floor and went home together. A night to remember.",
+    hookupInfection: "You went home with {name}, but weeks later you were diagnosed with an infection. Next time, protection.",
+    hookupStayed: "You went home with {name}, and you kept in touch afterwards.",
+    fun: "You danced all night with friends. No romance, just fun.",
+    bad: "Loud music, expensive drinks, sore feet. Not your night.",
+  },
+  invest: {
+    title: "Investments",
+    intro: "Invest your savings. Returns change every year: safer assets grow slowly, risky ones can soar or crash.",
+    minAge: "Investing is available from age 18.",
+    balance: "Invested: {amount}",
+    put: "Invest {pct}%",
+    sellAll: "Sell all",
+    bonds: {
+      name: "Government bonds",
+      desc: "Low risk. About 3–4% per year.",
+    },
+    stocks: {
+      name: "Stock index fund",
+      desc: "Medium risk. About 7% per year on average, with bad years.",
+    },
+    crypto: {
+      name: "Cryptocurrency",
+      desc: "Very high risk. Can multiply or lose most of its value.",
+    },
+  },
+  ca: {
+    title: {
+      school: "At school",
+      uni: "At university",
+      work: "At work",
+    },
+    intro: "Each one uses an action and can be done once a year.",
+    club: {
+      name: "Join a school club",
+      desc: "Make friends and build discipline.",
+      log: "You joined a school club and found your people.",
+    },
+    teacherHelp: {
+      name: "Ask a teacher for help",
+      desc: "Improve your grades.",
+      log: "Your teacher stayed after class to explain everything. Grades are improving.",
+    },
+    cram: {
+      name: "Cram for exams",
+      desc: "Big grade boost, at a cost to health.",
+      log: "You crammed for days. Exhausting, but the grades show it.",
+    },
+    skipClass: {
+      name: "Skip class",
+      desc: "Fun now, worse grades. You may get caught.",
+      log: "You skipped class and spent the day out. Nobody noticed.",
+      caught: "You skipped class and got caught. The school called home.",
+    },
+    studyGroup: {
+      name: "Join a study group",
+      desc: "Better course performance.",
+      log: "Your study group kept everyone on track.",
+    },
+    internship: {
+      name: "Do an internship",
+      desc: "Experience that helps you get hired later.",
+      log: "Your internship taught you how things work in the real world.",
+    },
+    research: {
+      name: "Join a research project",
+      desc: "Knowledge and reputation (degrees only).",
+      log: "You helped a professor with research. Your name is on a paper!",
+    },
+    campusParty: {
+      name: "Go to a campus party",
+      desc: "Fun and friends, worse grades.",
+      log: "The campus party was legendary. Studying, less so.",
+    },
+    overtime: {
+      name: "Work overtime",
+      desc: "Extra pay and performance, at a cost to health.",
+      log: "You stayed late for weeks. The extra pay helps; your body complains.",
+    },
+    network: {
+      name: "Network with colleagues",
+      desc: "Reputation and social skills.",
+      log: "Lunches and coffees with colleagues widened your circle.",
+    },
+    training: {
+      name: "Take a work training course",
+      desc: "Knowledge and job performance.",
+      log: "You completed a training course and use it every day.",
+    },
+    askBonus: {
+      name: "Ask for a bonus",
+      desc: "Better chances with high performance.",
+      ok: "Your manager agreed: you got a bonus!",
+      fail: "Your manager said no, and noticed you asked.",
+    },
+    askPromotion: {
+      name: "Ask for a promotion",
+      desc: "Try to move up early. Depends on performance.",
+      ok: "Your request worked: you were promoted!",
+      fail: "Your manager said you are not ready yet.",
+    },
+  },
   stat: {
     health: 'Health',
     happiness: 'Happiness',
@@ -255,6 +367,19 @@ export default {
     toy: 'your favorite childhood toy',
   },
   interact: {
+    confess: {
+      name: "Confess your feelings",
+      desc: "Try to turn this friendship into romance.",
+      ok: "{name} felt the same way. You are now a couple!",
+      fail: "{name} only sees you as a friend. Things got awkward.",
+    },
+    intimate: {
+      name: "Get intimate",
+      desc: "Spend an intimate night together.",
+      partner: "You and {name} shared an intimate night. You feel closer than ever.",
+      ok: "You and {name} spent the night together. Friends… with benefits.",
+      fail: "{name} was not interested. It got awkward between you.",
+    },
     talk: { name: 'Talk', desc: 'Catch up. Small bond boost.', log: 'You had a good conversation with {name}.' },
     time: { name: 'Spend time', desc: 'Do something together. Bigger bond boost.', log: 'You spent quality time with {name}.' },
     support: { name: 'Offer support', desc: 'Help with something that matters to them.', log: 'You were there for {name} when it counted.' },
@@ -267,6 +392,12 @@ export default {
     playPet: { name: 'Play', desc: 'Fetch, belly rubs, pure joy.', log: 'You played with {name}. Pure joy.' },
   },
   log: {
+    invest: {
+      buy: "You invested {amount} in {kind}.",
+      sell: "You sold your {kind} for {amount}.",
+      year: "{kind}: {pct}% this year. Now worth {amount}.",
+      crash: "{kind} crashed: {pct}% this year. Now worth {amount}.",
+    },
     birth: {
       two: 'You were born in {city}, {country}, as {name}. Your family: {p1} and {p2}.',
       one: 'You were born in {city}, {country}, as {name}. {p1} is raising you alone.',
@@ -332,6 +463,7 @@ export default {
       sold: 'You sold your home and kept {amount}.',
     },
     partner: {
+      cheatingFound: "{name} found out you were with someone else. Trust is shattered.",
       found: 'You started dating {name}.',
       none: 'You went on a few dates, but nothing clicked.',
     },
@@ -422,6 +554,9 @@ export default {
     dreamJob: 'Working in your childhood dream field',
   },
   error: {
+    bondTooLow60: "Your bond is not strong enough yet (60+).",
+    bondTooLow50: "Your bond is not strong enough yet (50+).",
+    noInvestment: "Nothing invested here.",
     unknown: 'Something went wrong. The game state was not changed.',
     gameOver: 'This life has ended.',
     decisionPending: 'Resolve the pending decision first.',

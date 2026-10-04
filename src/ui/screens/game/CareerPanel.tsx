@@ -1,3 +1,4 @@
+import { CareerActions } from './ExtrasPanels';
 import { useState } from 'react';
 import { CAREERS } from '../../../content/careers';
 import { COURSES, getCourse } from '../../../content/courses';
@@ -403,10 +404,13 @@ export function CareerPanel({ ctl }: { ctl: GameController }) {
         {t('edu.title')}
       </h2>
       <SchoolSection game={game} />
+      <CareerActions ctl={ctl} context="school" />
       <CoursesSection ctl={ctl} />
+      <CareerActions ctl={ctl} context="uni" />
       <LicenseSection ctl={ctl} />
       <h2 className="section-title">{t('work.title')}</h2>
       <JobSection ctl={ctl} />
+      <CareerActions ctl={ctl} context="work" />
       <MarketSection ctl={ctl} />
       <HistorySection game={game} />
     </section>

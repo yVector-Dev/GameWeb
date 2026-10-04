@@ -9,6 +9,7 @@ import { processEducationYear } from './education';
 import { scheduleEvent } from './effects';
 import { processScheduled, rollRandomEvents } from './events';
 import { processFinanceYear } from './finance';
+import { processInvestmentsYear } from './extras';
 import { processRelationshipsYear } from './relationships';
 import type { Rng } from './rng';
 import type { Delta, GameState } from './types';
@@ -144,6 +145,7 @@ export function ageUp(state: GameState): GameState {
     processCareerYear(s, ctx);
     processLifeStages(s);
     processFinanceYear(s, ctx);
+    processInvestmentsYear(s, ctx);
     processNaturalStats(s, ctx);
     if (ctx.deltas.length > 0) addLog(s, 'log.year.changes', { deltas: ctx.deltas });
 

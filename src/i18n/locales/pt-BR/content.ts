@@ -29,6 +29,118 @@ export default {
       veryHard: 'Em {country}, o salário compra pouco, o apoio é escasso e as oportunidades são raras. A vida será dura.',
     },
   },
+  orientation: {
+    straight: "Hétero",
+    gay: "Gay",
+    gay_f: "Lésbica",
+    bi: "Bissexual",
+  },
+  club: {
+    name: "Ir à balada",
+    desc: "Dançar, beber, conhecer gente. Talvez ir para casa com alguém.",
+    info: "Custa {amount} · uma ação",
+    hookup: "Você conheceu {name} na pista e vocês foram para casa juntos. Uma noite para lembrar.",
+    hookupInfection: "Você foi para casa com {name}, mas semanas depois descobriu uma infecção. Da próxima vez, proteção.",
+    hookupStayed: "Você foi para casa com {name}, e vocês continuaram se falando depois.",
+    fun: "Você dançou a noite toda com as amizades. Sem romance, só diversão.",
+    bad: "Música alta, bebida cara, pés doendo. Não foi a sua noite.",
+  },
+  invest: {
+    title: "Investimentos",
+    intro: "Invista suas economias. Os rendimentos mudam todo ano: ativos seguros crescem devagar; os arriscados podem disparar ou despencar.",
+    minAge: "Investimentos ficam disponíveis a partir dos 18 anos.",
+    balance: "Investido: {amount}",
+    put: "Investir {pct}%",
+    sellAll: "Vender tudo",
+    bonds: {
+      name: "Títulos públicos",
+      desc: "Baixo risco. Cerca de 3–4% ao ano.",
+    },
+    stocks: {
+      name: "Fundo de índice de ações",
+      desc: "Risco médio. Cerca de 7% ao ano em média, com anos ruins.",
+    },
+    crypto: {
+      name: "Criptomoedas",
+      desc: "Risco altíssimo. Pode multiplicar ou perder quase tudo.",
+    },
+  },
+  ca: {
+    title: {
+      school: "Na escola",
+      uni: "Na faculdade",
+      work: "No trabalho",
+    },
+    intro: "Cada uma usa uma ação e pode ser feita uma vez por ano.",
+    club: {
+      name: "Entrar num clube da escola",
+      desc: "Fazer amizades e ganhar disciplina.",
+      log: "Você entrou num clube da escola e encontrou sua turma.",
+    },
+    teacherHelp: {
+      name: "Pedir ajuda à professora",
+      desc: "Melhorar as notas.",
+      log: "A professora ficou depois da aula para explicar tudo. As notas estão subindo.",
+    },
+    cram: {
+      name: "Estudar intensamente para as provas",
+      desc: "Grande aumento nas notas, com custo para a saúde.",
+      log: "Você virou noites estudando. Exaustivo, mas as notas mostram.",
+    },
+    skipClass: {
+      name: "Matar aula",
+      desc: "Diversão agora, notas piores. Pode dar flagra.",
+      log: "Você matou aula e passou o dia fora. Ninguém percebeu.",
+      caught: "Você matou aula e deu flagra. A escola ligou para casa.",
+    },
+    studyGroup: {
+      name: "Entrar num grupo de estudos",
+      desc: "Melhor desempenho no curso.",
+      log: "O grupo de estudos manteve todo mundo no ritmo.",
+    },
+    internship: {
+      name: "Fazer estágio",
+      desc: "Experiência que ajuda a conseguir emprego depois.",
+      log: "O estágio mostrou como as coisas funcionam no mundo real.",
+    },
+    research: {
+      name: "Entrar num projeto de pesquisa",
+      desc: "Conhecimento e reputação (só em graduação).",
+      log: "Você ajudou um professor numa pesquisa. Seu nome está num artigo!",
+    },
+    campusParty: {
+      name: "Ir a uma festa universitária",
+      desc: "Diversão e amizades, notas piores.",
+      log: "A festa foi lendária. Os estudos, nem tanto.",
+    },
+    overtime: {
+      name: "Fazer hora extra",
+      desc: "Dinheiro extra e desempenho, com custo para a saúde.",
+      log: "Você ficou até tarde por semanas. O dinheiro extra ajuda; o corpo reclama.",
+    },
+    network: {
+      name: "Fazer networking",
+      desc: "Reputação e habilidades sociais.",
+      log: "Almoços e cafés com colegas ampliaram seu círculo.",
+    },
+    training: {
+      name: "Fazer um treinamento",
+      desc: "Conhecimento e desempenho no trabalho.",
+      log: "Você concluiu um treinamento e usa o que aprendeu todo dia.",
+    },
+    askBonus: {
+      name: "Pedir um bônus",
+      desc: "Mais chance com desempenho alto.",
+      ok: "A chefia aceitou: você ganhou um bônus!",
+      fail: "A chefia disse não, e notou o pedido.",
+    },
+    askPromotion: {
+      name: "Pedir promoção",
+      desc: "Tentar subir antes do tempo. Depende do desempenho.",
+      ok: "O pedido deu certo: veio a promoção!",
+      fail: "A chefia disse que ainda não é a hora.",
+    },
+  },
   stat: {
     health: 'Saúde',
     happiness: 'Felicidade',
@@ -372,6 +484,19 @@ export default {
     toy: 'seu brinquedo favorito da infância',
   },
   interact: {
+    confess: {
+      name: "Declarar seus sentimentos",
+      desc: "Tentar transformar a amizade em romance.",
+      ok: "{name} sentia o mesmo. Agora vocês são um casal!",
+      fail: "{name} só vê você como amizade. O clima ficou estranho.",
+    },
+    intimate: {
+      name: "Ter intimidade",
+      desc: "Passar uma noite íntima juntos.",
+      partner: "Você e {name} tiveram uma noite íntima. Vocês nunca estiveram tão próximos.",
+      ok: "Você e {name} passaram a noite juntos. Amizade… colorida.",
+      fail: "{name} não quis. O clima ficou estranho entre vocês.",
+    },
     talk: { name: 'Conversar', desc: 'Colocar o papo em dia. Pequeno aumento de vínculo.', log: 'Você teve uma boa conversa com {name}.' },
     time: { name: 'Passar tempo em companhia', desc: 'Fazer algo em companhia. Aumento maior de vínculo.', log: 'Você passou um tempo de qualidade com {name}.' },
     support: { name: 'Oferecer apoio', desc: 'Ajudar em algo importante para a pessoa.', log: 'Você esteve presente quando {name} mais precisou.' },
@@ -384,6 +509,12 @@ export default {
     playPet: { name: 'Brincar', desc: 'Bolinha, carinho na barriga, pura alegria.', log: 'Você brincou com {name}. Pura alegria.' },
   },
   log: {
+    invest: {
+      buy: "Você investiu {amount} em {kind}.",
+      sell: "Você vendeu {kind} por {amount}.",
+      year: "{kind}: {pct}% neste ano. Agora vale {amount}.",
+      crash: "{kind} despencou: {pct}% neste ano. Agora vale {amount}.",
+    },
     birth: {
       two: 'Você nasceu em {city}, {country}, e recebeu o nome {name}. Sua família: {p1} e {p2}.',
       one: 'Você nasceu em {city}, {country}, e recebeu o nome {name}. {p1} cria você sem companhia.',
@@ -449,6 +580,7 @@ export default {
       sold: 'Você vendeu sua casa e ficou com {amount}.',
     },
     partner: {
+      cheatingFound: "{name} descobriu que você ficou com outra pessoa. A confiança se quebrou.",
       found: 'Você começou a namorar {name}.',
       none: 'Você teve alguns encontros, mas nada engrenou.',
     },
@@ -539,6 +671,9 @@ export default {
     dreamJob: 'Trabalhando na área do sonho de infância',
   },
   error: {
+    bondTooLow60: "O vínculo ainda não é forte o bastante (60+).",
+    bondTooLow50: "O vínculo ainda não é forte o bastante (50+).",
+    noInvestment: "Não há nada investido aqui.",
     unknown: 'Algo deu errado. O estado do jogo não foi alterado.',
     gameOver: 'Esta vida terminou.',
     decisionPending: 'Resolva a decisão pendente primeiro.',

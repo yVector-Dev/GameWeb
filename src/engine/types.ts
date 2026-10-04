@@ -31,6 +31,9 @@ export type HobbyId = (typeof HOBBY_IDS)[number];
 export type Background = 'struggling' | 'modest' | 'comfortable' | 'wealthy';
 export type Housing = 'family' | 'rent_small' | 'rent_nice' | 'own';
 export type DatingPreference = 'any' | 'm' | 'f';
+export type Orientation = 'straight' | 'gay' | 'bi';
+export const INVESTMENT_KINDS = ['bonds', 'stocks', 'crypto'] as const;
+export type InvestmentKind = (typeof INVESTMENT_KINDS)[number];
 
 export type RelationKind =
   | 'parent'
@@ -214,6 +217,8 @@ export interface FinanceState {
   /** Age at which yearly finances were last processed (idempotency guard). */
   lastProcessedAge: number;
   lastLedger: YearLedger | null;
+  /** Money invested per kind (optional for saves made before investments). */
+  investments?: Partial<Record<InvestmentKind, number>>;
   /** Count of consecutive years spent with consumer debt. */
   debtYears: number;
   /** Purchases that may only happen once per year (e.g. vacation). */

@@ -1,3 +1,4 @@
+import { InvestmentsSection } from './ExtrasPanels';
 import { useState } from 'react';
 import { HOME_PRICE, HOUSING, ITEMS } from '../../../content/items';
 import { buyItem, changeHousing, netWorth, payDebt, sellItem } from '../../../engine';
@@ -224,6 +225,7 @@ export function MoneyPanel({ ctl }: { ctl: GameController }) {
       <Ledger game={game} />
       <Projected game={game} />
       <Debts ctl={ctl} />
+      <InvestmentsSection ctl={ctl} />
       <HousingSection ctl={ctl} />
       <Shop ctl={ctl} />
     </section>

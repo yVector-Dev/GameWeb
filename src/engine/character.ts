@@ -2,10 +2,24 @@ import { COUNTRIES } from '../content/countries';
 import { addLog, clamp, setFeedback } from './core';
 import { createNpc, randomFirstName, randomSurname } from './people';
 import { Rng, seedFrom } from './rng';
-import type { Background, Character, GameState, Gender, Pronouns, Stats, TraitId } from './types';
+import type { Background, Character, DatingPreference, GameState, Gender, Orientation, Pronouns, Stats, TraitId } from './types';
 import { TRAIT_IDS } from './types';
 
 export const SAVE_SCHEMA = 1;
+
+/** Which gender a character is attracted to, from pronouns and orientation. */
+export function preferenceFor(pronouns: Pronouns, orientation: Orientation): DatingPreference {
+  if (orientation === 'bi') return 'any';
+  const own = pronouns === 'he' ? 'm' : 'f';
+  if (orientation === 'gay') return own;
+  return own === 'm' ? 'f' : 'm';
+}
+
+export function orientationOf(pronouns: Pronouns, pref: DatingPreference): Orientation {
+  if (pref === 'any') return 'bi';
+  const own = pronouns === 'he' ? 'm' : 'f';
+  return pref === own ? 'gay' : 'straight';
+}
 export const MAX_NAME_LENGTH = 24;
 
 export function actionsForAge(age: number): number {
@@ -27,6 +41,7 @@ export interface NewGameOptions {
   firstName: string;
   lastName: string;
   pronouns: Pronouns;
+  orientation?: Orientation;
   seed?: string | number;
 }
 
@@ -99,7 +114,7 @@ export function createNewGame(options: NewGameOptions): GameState {
     money: 0,
     traits,
     hobbies: {},
-    datingPreference: 'any',
+    datingPreference: preferenceFor(options.pronouns, options.orientation ?? 'straight'),
   };
 
   const state: GameState = {

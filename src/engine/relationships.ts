@@ -19,7 +19,7 @@ import {
 } from './core';
 import type { YearContext } from './context';
 import { assertCanAct, spendAction } from './guards';
-import { createNpc } from './people';
+import { createNpc, randomFirstName } from './people';
 import type { Rng } from './rng';
 import type { DatingPreference, Delta, GameState, Gender, NPC, Params } from './types';
 
@@ -41,7 +41,9 @@ export type InteractionId =
   | 'breakup'
   | 'tryChild'
   | 'askMoney'
-  | 'playPet';
+  | 'playPet'
+  | 'confess'
+  | 'intimate';
 
 export interface InteractionView {
   id: InteractionId;
@@ -54,6 +56,20 @@ export interface InteractionView {
 }
 
 const ASK_MONEY = { struggling: 150, modest: 500, comfortable: 1500, wealthy: 5000 } as const;
+
+/** True if the player is attracted to this person's gender. */
+export function attractedTo(state: GameState, npc: NPC): boolean {
+  const pref = state.character.datingPreference;
+  return pref === 'any' || pref === npc.gender;
+}
+
+export function confessChance(state: GameState, npc: NPC): number {
+  return clamp(npc.bond / 120 + state.character.stats.social / 400 - 0.1, 0.1, 0.9);
+}
+
+export function flingChance(npc: NPC): number {
+  return clamp(npc.bond / 110, 0.1, 0.85);
+}
 
 function isRomantic(npc: NPC): boolean {
   return npc.relation === 'partner' || npc.relation === 'spouse';
@@ -112,6 +128,14 @@ export function interactionsFor(state: GameState, npc: NPC): InteractionView[] {
   if (age >= 8) push('support', { cost: adult ? 100 : 0 });
   if (npc.conflict) push('resolve', { chance: resolveChance(state) });
 
+  // Friendship can turn into romance or intimacy, only between adults.
+  if (npc.relation === 'friend' && canRomance(state, npc) && attractedTo(state, npc)) {
+    if (!currentPartner(state)) {
+      push('confess', { chance: confessChance(state, npc), ok: npc.bond >= 60, why: 'error.bondTooLow60' });
+    }
+    push('intimate', { chance: npc.tags.includes('fwb') ? 0.95 : flingChance(npc), ok: npc.bond >= 50, why: 'error.bondTooLow50' });
+  }
+
   if (npc.relation === 'parent' && age >= 12) {
     const asked = state.counters.askedMoneyAge === age;
     push('askMoney', { chance: askMoneyChance(npc), ok: !asked, why: 'error.onceAYear' });
@@ -119,6 +143,7 @@ export function interactionsFor(state: GameState, npc: NPC): InteractionView[] {
 
   if (isRomantic(npc) && canRomance(state, npc)) {
     push('date', { cost: DATE_COST });
+    push('intimate');
     if (npc.relation === 'partner') {
       const together = state.year - (npc.sinceYear ?? state.year);
       push('propose', {
@@ -251,6 +276,46 @@ export function interact(state: GameState, npcId: string, id: InteractionId): Ga
         }
         changeBond(s, npc, 3, deltas);
         break;
+      case 'confess':
+        if (rng.chance(view.chance ?? 0.5)) {
+          npc.relation = 'partner';
+          npc.sinceYear = s.year;
+          npc.tags = npc.tags.filter((t) => t !== 'fwb');
+          changeBond(s, npc, 15, deltas);
+          changeStat(s, 'happiness', 8, deltas);
+          key = 'interact.confess.ok';
+          tone = 'milestone';
+        } else {
+          changeBond(s, npc, -15, deltas);
+          changeStat(s, 'happiness', -4, deltas);
+          if (rng.chance(0.4)) npc.conflict = true;
+          key = 'interact.confess.fail';
+          tone = 'bad';
+        }
+        break;
+      case 'intimate': {
+        if (isRomantic(npc)) {
+          changeBond(s, npc, 6, deltas);
+          changeStat(s, 'happiness', 5, deltas);
+          key = 'interact.intimate.partner';
+          tone = 'good';
+          break;
+        }
+        if (rng.chance(view.chance ?? 0.5)) {
+          if (!npc.tags.includes('fwb')) npc.tags.push('fwb');
+          changeBond(s, npc, 5, deltas);
+          changeStat(s, 'happiness', 6, deltas);
+          key = 'interact.intimate.ok';
+          tone = 'good';
+          cheatingRisk(s, rng, deltas);
+        } else {
+          changeBond(s, npc, -10, deltas);
+          changeStat(s, 'happiness', -3, deltas);
+          key = 'interact.intimate.fail';
+          tone = 'bad';
+        }
+        break;
+      }
       case 'playPet':
         changeBond(s, npc, 8, deltas);
         changeStat(s, 'happiness', 3, deltas);
@@ -258,6 +323,75 @@ export function interact(state: GameState, npcId: string, id: InteractionId): Ga
     }
     addLog(s, key, { params, tone, deltas });
     setFeedback(s, { titleKey: `interact.${id}.name`, textKey: key, textParams: params, deltas, tone });
+  });
+}
+
+/** Being with someone else while in a relationship may be discovered. */
+function cheatingRisk(s: GameState, rng: Rng, deltas: Delta[]): void {
+  const partner = currentPartner(s);
+  if (!partner) return;
+  addCounter(s, 'affairs');
+  if (!rng.chance(0.35)) return;
+  changeBond(s, partner, -35, deltas);
+  partner.conflict = true;
+  changeStat(s, 'happiness', -6, deltas);
+  addLog(s, 'log.partner.cheatingFound', { tone: 'bad', params: { name: partner.firstName } });
+}
+
+export const CLUB_COST = 90;
+
+export function canGoClubbing(state: GameState): { ok: boolean; reason?: string } {
+  if (state.character.age < 18) return { ok: false, reason: 'error.tooYoung' };
+  if (state.actions.used >= state.actions.max) return { ok: false, reason: 'error.noActions' };
+  if (state.character.money < CLUB_COST) return { ok: false, reason: 'error.notEnoughMoney' };
+  return { ok: true };
+}
+
+/** A night out: maybe a hookup, maybe just fun, sometimes a bad night. */
+export function goClubbing(state: GameState): GameState {
+  return transition(state, (s, rng) => {
+    assertCanAct(s);
+    const check = canGoClubbing(s);
+    if (!check.ok) throw new EngineError((check.reason ?? 'error.requirements').replace(/^error\./, ''));
+    spendAction(s);
+    const deltas: Delta[] = [];
+    changeMoney(s, -CLUB_COST, deltas);
+    const c = s.character;
+    const hookupChance = clamp(0.25 + c.stats.social / 250 + (c.traits.includes('outgoing') ? 0.1 : 0) - (c.age > 45 ? 0.15 : 0), 0.1, 0.75);
+    const roll = rng.next();
+    let key: string;
+    let tone: 'good' | 'bad' | 'neutral' = 'good';
+    const params: Params = {};
+    if (roll < hookupChance) {
+      const gender = partnerGender(rng, c.datingPreference);
+      const name = randomFirstName(rng, gender);
+      params.name = name;
+      changeStat(s, 'happiness', 6, deltas);
+      changeStat(s, 'social', 2, deltas);
+      addCounter(s, 'hookups');
+      key = 'club.hookup';
+      if (rng.chance(0.06)) {
+        changeStat(s, 'health', -5, deltas);
+        key = 'club.hookupInfection';
+        tone = 'bad';
+      } else if (rng.chance(0.25)) {
+        const npc = createNpc(s, rng, { relation: 'friend', gender, age: Math.max(18, c.age + rng.int(-4, 4)), bond: 45, tags: ['fling'] });
+        npc.firstName = name;
+        key = 'club.hookupStayed';
+      }
+      cheatingRisk(s, rng, deltas);
+    } else if (roll < hookupChance + 0.4) {
+      changeStat(s, 'happiness', 3, deltas);
+      changeStat(s, 'social', 2, deltas);
+      key = 'club.fun';
+    } else {
+      changeStat(s, 'happiness', -2, deltas);
+      changeStat(s, 'health', -1, deltas);
+      key = 'club.bad';
+      tone = 'bad';
+    }
+    addLog(s, key, { params, tone, deltas });
+    setFeedback(s, { titleKey: 'club.name', textKey: key, textParams: params, deltas, tone });
   });
 }
 

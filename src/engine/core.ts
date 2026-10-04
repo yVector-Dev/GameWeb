@@ -167,5 +167,6 @@ export function fullName(npc: NPC): string {
 
 export function netWorth(state: GameState): number {
   const f = state.finance;
-  return state.character.money + f.homeValue - f.mortgage - f.studentDebt - f.debt;
+  const invested = Object.values(f.investments ?? {}).reduce((a, b) => a + (b ?? 0), 0);
+  return state.character.money + invested + f.homeValue - f.mortgage - f.studentDebt - f.debt;
 }

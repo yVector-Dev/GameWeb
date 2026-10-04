@@ -318,6 +318,13 @@ export function validateGameState(raw: unknown): GameState {
     debtYears: int(f.debtYears, 'finance.debtYears', 0, 130),
     boughtThisYear: itemList(f.boughtThisYear, 'finance.boughtThisYear'),
   };
+  if (f.investments !== undefined) {
+    const inv = obj(f.investments, 'finance.investments');
+    finance.investments = {};
+    for (const kind of ['bonds', 'stocks', 'crypto'] as const) {
+      if (inv[kind] !== undefined) finance.investments[kind] = num(inv[kind], `finance.investments.${kind}`, 0, 1e13);
+    }
+  }
   if (finance.lastProcessedAge > age) fail('finance.lastProcessedAge', 'ahead of character age');
 
   const a = obj(s.actions, 'actions');

@@ -1,7 +1,7 @@
 import { useId, useState, type FormEvent } from 'react';
 import { MAX_NAME_LENGTH, randomIdentity, type NewGameOptions } from '../../engine/character';
 import { Rng, seedFrom } from '../../engine/rng';
-import type { Pronouns } from '../../engine/types';
+import type { Orientation, Pronouns } from '../../engine/types';
 import type { SlotInfo } from '../../persistence/save';
 import { ConfirmDialog } from '../components/Dialog';
 import { useI18n } from '../i18n';
@@ -21,6 +21,7 @@ export function CreateScreen({ slots, onCreate, onBack }: Props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [pronouns, setPronouns] = useState<Pronouns>('she');
+  const [orientation, setOrientation] = useState<Orientation>('straight');
   const [seed, setSeed] = useState('');
   const [slot, setSlot] = useState(firstEmpty);
   const [confirmOverwrite, setConfirmOverwrite] = useState(false);
@@ -39,6 +40,7 @@ export function CreateScreen({ slots, onCreate, onBack }: Props) {
       firstName: firstName.trim() || fallback.firstName,
       lastName: lastName.trim() || fallback.lastName,
       pronouns,
+      orientation,
       seed: seed.trim() || undefined,
     };
   };
@@ -102,6 +104,18 @@ export function CreateScreen({ slots, onCreate, onBack }: Props) {
               <label key={p} className={pronouns === p ? 'is-active' : ''}>
                 <input type="radio" name="pronouns" value={p} checked={pronouns === p} onChange={() => setPronouns(p)} />
                 {t(`pronoun.${p}`)}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset className="field">
+          <legend className="field__label">{t('create.orientation')}</legend>
+          <div className="segmented">
+            {(['straight', 'gay', 'bi'] as Orientation[]).map((o) => (
+              <label key={o} className={orientation === o ? 'is-active' : ''}>
+                <input type="radio" name="orientation" value={o} checked={orientation === o} onChange={() => setOrientation(o)} />
+                {t(`orientation.${o}`, undefined, o === 'gay' && pronouns === 'she' ? 'f' : undefined)}
               </label>
             ))}
           </div>

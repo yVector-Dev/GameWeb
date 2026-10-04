@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { adoptChild, findPartner, interact, npcAge, relationParam, setDatingPreference } from '../../../engine';
+import { adoptChild, findPartner, goClubbing, interact, npcAge, relationParam, setDatingPreference } from '../../../engine';
 import {
   ADOPTION_COST,
   canAdopt,
+  canGoClubbing,
+  CLUB_COST,
   canFindPartner,
   FIND_PARTNER_COST,
   findPartnerChance,
@@ -109,6 +111,7 @@ function RomanceTools({ ctl }: { ctl: GameController }) {
   if (game.character.age < 18) return <p className="muted small">{t('people.romanceAdults')}</p>;
   const partnerCheck = canFindPartner(game);
   const adoptCheck = canAdopt(game);
+  const clubCheck = canGoClubbing(game);
   const pref = game.character.datingPreference;
   return (
     <div className="block romance-tools">
@@ -138,6 +141,12 @@ function RomanceTools({ ctl }: { ctl: GameController }) {
             ? t('people.findPartnerInfo', { amount: { money: FIND_PARTNER_COST }, pct: Math.round(findPartnerChance(game) * 100) })
             : t(partnerCheck.reason ?? 'error.requirements')}
         </span>
+      </div>
+      <div className="row">
+        <button type="button" className="button button--secondary" disabled={!clubCheck.ok} onClick={() => ctl.run(goClubbing)}>
+          {t('club.name')}
+        </button>
+        <span className="muted small">{clubCheck.ok ? t('club.info', { amount: { money: CLUB_COST } }) : t(clubCheck.reason ?? 'error.requirements')}</span>
       </div>
       {game.character.age >= 25 && (
         <div className="row">

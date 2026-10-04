@@ -73,6 +73,14 @@ A dificuldade sai dessas proporções, e não de regras especiais:
 - **Difícil** (Brasil, México, Portugal): salário compra pouco e o auxílio é baixo.
 - **Muito difícil** (Argentina, Índia, Nigéria): renda muito baixa perto dos preços, quase nenhum auxílio, menos vagas e mais mortalidade.
 
+## Relacionamentos, investimentos e ações de rotina
+
+- **Orientação sexual**: escolhida na criação (hétero, gay/lésbica ou bissexual) e usada para definir com quem a personagem pode se relacionar.
+- **De amizade a romance**: amizades adultas e com o gênero compatível podem virar namoro ("Declarar seus sentimentos", vínculo 60+), ou uma amizade colorida ("Ter intimidade", vínculo 50+).
+- **Vida sexual (só adultos, descrita sem cenas explícitas)**: intimidade com o par ou com amizades, e ida à balada, onde dá para ficar com alguém, só se divertir ou ter uma noite ruim. Há risco de infecção e, se a personagem tiver par, chance de a traição ser descoberta.
+- **Investimentos**: títulos públicos (baixo risco), fundo de ações (risco médio, com anos de queda) e criptomoedas (alto risco, com quedas fortes). Os rendimentos são sorteados a cada ano e entram no patrimônio.
+- **Escola, faculdade e trabalho**: ações extras uma vez por ano. Na escola: clube, pedir ajuda à professora, estudar para as provas e matar aula. Na faculdade: grupo de estudos, estágio, pesquisa e festa. No trabalho: hora extra, networking, treinamento, pedir bônus e pedir promoção.
+
 ## Arquitetura
 
 ```
@@ -167,7 +175,7 @@ Regras de redação: use frases completas por chave (não concatene fragmentos),
 
 ## Testes
 
-`npm test` executa 74 testes em `tests/`:
+`npm test` executa 81 testes em `tests/`:
 
 - `limits.test.ts`: limites 0–100 dos atributos, orçamento de ações, retornos decrescentes, bico uma vez por ano, Age Up bloqueado durante uma decisão, nomes não repetidos.
 - `events.test.ts`: quantidade e distribuição de eventos, cadeias, 2 a 4 escolhas com ao menos uma sempre possível, flags e agendamentos válidos, elegibilidade (pessoa morta, sem emprego, faixa etária, eventos só agendados, romance só entre adultos).

@@ -7,6 +7,7 @@ import { checkAchievements } from './achievements';
 import * as career from './career';
 import * as education from './education';
 import * as events from './events';
+import * as extras from './extras';
 import * as finance from './finance';
 import * as relationships from './relationships';
 import type { GameState } from './types';
@@ -38,6 +39,10 @@ export const interact = withChecks(relationships.interact);
 export const findPartner = withChecks(relationships.findPartner);
 export const adoptChild = withChecks(relationships.adoptChild);
 export const setDatingPreference = relationships.setDatingPreference;
+export const goClubbing = withChecks(relationships.goClubbing);
+export const invest = withChecks(extras.invest);
+export const withdraw = withChecks(extras.withdraw);
+export const performCareerAction = withChecks(extras.performCareerAction);
 
 export { createNewGame, randomIdentity, sanitizeName, SAVE_SCHEMA, MAX_NAME_LENGTH } from './character';
 export { canAgeUp, deathChance } from './yearCycle';
