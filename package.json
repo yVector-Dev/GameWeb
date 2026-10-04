@@ -11,7 +11,8 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
-    "i18n:check": "vitest run tests/i18n.test.ts"
+    "i18n:check": "vitest run tests/i18n.test.ts",
+    "build:single": "npm run build && node scripts-inline.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

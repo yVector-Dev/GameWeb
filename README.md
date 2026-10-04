@@ -6,6 +6,12 @@ RPG de texto e simulador de vida para navegador. Você acompanha uma pessoa do n
 - Toda a simulação roda no navegador, com conteúdo escrito previamente e sorteios controlados por regras e por um gerador pseudoaleatório com seed.
 - Idiomas: inglês (padrão), português brasileiro e espanhol. A troca é imediata, sem reiniciar a partida, e o histórico já escrito também muda de idioma.
 
+## Jogar sem instalar nada
+
+Abra o arquivo **`jogar/index.html`** no navegador (duplo clique). Ele é autocontido: o JavaScript e o CSS estão embutidos, sem servidor e sem internet. Os saves ficam no navegador, como na versão hospedada.
+
+Para regenerar esse arquivo depois de mudar o código: `npm run build:single`.
+
 ## Requisitos
 
 - Node.js 20.19+ ou 22.12+ (testado com Node 22)
@@ -24,6 +30,7 @@ npm run dev        # servidor de desenvolvimento (http://localhost:5173)
 | --- | --- |
 | `npm run dev` | Servidor de desenvolvimento com recarga automática |
 | `npm run build` | Verifica tipos (`tsc -b`) e gera os arquivos estáticos em `dist/` |
+| `npm run build:single` | Gera `jogar/index.html`, um arquivo único que abre direto do disco |
 | `npm run preview` | Serve o conteúdo de `dist/` localmente para conferência |
 | `npm test` | Roda todos os testes (Vitest) |
 | `npm run typecheck` | Só a verificação de tipos |
