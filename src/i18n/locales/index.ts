@@ -1,12 +1,15 @@
 import enContent from './en/content';
 import enEvents from './en/events';
 import enUi from './en/ui';
+import enLife from './en/life';
 import esContent from './es/content';
 import esEvents from './es/events';
 import esUi from './es/ui';
+import esLife from './es/life';
 import ptContent from './pt-BR/content';
 import ptEvents from './pt-BR/events';
 import ptUi from './pt-BR/ui';
+import ptLife from './pt-BR/life';
 
 export interface MessageTree {
   readonly [key: string]: string | MessageTree;
@@ -33,7 +36,7 @@ export function flatten(trees: MessageTree[]): Messages {
 }
 
 export const DICTIONARIES: Record<'en' | 'pt-BR' | 'es', Messages> = {
-  en: flatten([enUi, enContent, enEvents]),
-  'pt-BR': flatten([ptUi, ptContent, ptEvents]),
-  es: flatten([esUi, esContent, esEvents]),
+  en: flatten([enUi, enContent, enEvents, enLife]),
+  'pt-BR': flatten([ptUi, ptContent, ptEvents, ptLife]),
+  es: flatten([esUi, esContent, esEvents, esLife]),
 };

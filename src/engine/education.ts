@@ -259,7 +259,7 @@ export function enrollCourse(state: GameState, courseId: string, funding: Fundin
       if (s.character.money < bill.student) throw new EngineError('notEnoughMoneyTuition', { amount: { money: bill.student } });
     }
     if (scholarship > 0) s.education.scholarship = 0;
-    spendAction(s);
+    spendAction(s, 'work');
     s.education.enrolled = enrollment;
     const params = { course: { t: `course.${courseId}.name` } };
     addLog(s, scholarship > 0 ? 'log.course.enrolledScholarship' : 'log.course.enrolled', {
@@ -299,7 +299,7 @@ export function takeLicenseTest(state: GameState): GameState {
     if (s.education.license) throw new EngineError('alreadyLicensed');
     if (s.character.money < LICENSE_COST) throw new EngineError('notEnoughMoney', { amount: { money: LICENSE_COST } });
     const chance = licenseChance(s);
-    spendAction(s);
+    spendAction(s, 'work');
     const deltas: Delta[] = [];
     changeMoney(s, -LICENSE_COST, deltas);
     addCounter(s, 'licenseAttempts');

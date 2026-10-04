@@ -15,7 +15,7 @@ import {
   transition,
 } from './core';
 import { isInSchool } from './education';
-import { assertCanAct, spendAction } from './guards';
+import { assertCanAct, poolLeft, spendAction } from './guards';
 import { makeFriend } from './relationships';
 import type { Delta, GameState, HobbyId, Params, StatKey } from './types';
 import { HOBBY_IDS, STAT_KEYS } from './types';
@@ -82,7 +82,7 @@ export function activityAvailability(state: GameState, def: ActivityDef): { ok: 
   const used = state.actions.counts[def.id] ?? 0;
   if (!state.alive) return { ok: false, reason: 'error.gameOver' };
   if (age < def.minAge || age > def.maxAge) return { ok: false, reason: 'error.wrongAge' };
-  if (state.actions.used >= state.actions.max) return { ok: false, reason: 'error.noActions' };
+  if (poolLeft(state, def.pool) <= 0) return { ok: false, reason: 'error.noActions' };
   if (def.perYearLimit !== undefined && used >= def.perYearLimit) return { ok: false, reason: 'error.onceAYear' };
   if (!checkAll(state, def.requires)) return { ok: false, reason: 'error.requirements' };
   if (state.character.money < activityCost(state, def)) return { ok: false, reason: 'error.notEnoughMoney' };
@@ -118,7 +118,7 @@ export function performActivity(state: GameState, activityId: string, options: {
     const factor = diminishingFactor(timesUsed);
     const deltas: Delta[] = [];
     const gains = previewGains(s, def);
-    spendAction(s);
+    spendAction(s, def.pool);
     s.actions.counts[def.id] = timesUsed + 1;
 
     const cost = activityCost(s, def);

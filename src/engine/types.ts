@@ -2,7 +2,7 @@
 // can be persisted, exported and validated. Visible text is never stored
 // here: the log keeps translation keys plus named parameters.
 
-export const STAT_KEYS = ['health', 'happiness', 'knowledge', 'social', 'discipline', 'reputation'] as const;
+export const STAT_KEYS = ['health', 'happiness', 'knowledge', 'social', 'discipline', 'reputation', 'looks'] as const;
 export type StatKey = (typeof STAT_KEYS)[number];
 export type Stats = Record<StatKey, number>;
 
@@ -126,6 +126,17 @@ export interface Character {
   traits: TraitId[];
   hobbies: Partial<Record<HobbyId, number>>;
   datingPreference: DatingPreference;
+  /** Ongoing illnesses (optional for older saves). */
+  conditions?: HealthCondition[];
+  /** Age at which a prison sentence ends (absent when free). */
+  prisonUntil?: number;
+}
+
+export interface HealthCondition {
+  id: string;
+  sinceAge: number;
+  /** Chronic conditions under treatment hurt less. */
+  treated: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -174,7 +185,7 @@ export interface CareerRecord {
   level: number;
   fromAge: number;
   toAge: number;
-  reason: 'quit' | 'fired' | 'retired' | 'laidoff' | 'changed' | 'died';
+  reason: 'quit' | 'fired' | 'retired' | 'laidoff' | 'changed' | 'died' | 'agedOut' | 'prison';
 }
 
 export interface CareerState {
@@ -225,6 +236,8 @@ export interface FinanceState {
   boughtThisYear: string[];
 }
 
+export type ActionPool = 'personal' | 'work' | 'social';
+
 export interface ActionBudget {
   used: number;
   max: number;
@@ -232,6 +245,8 @@ export interface ActionBudget {
   counts: Record<string, number>;
   /** Interactions per NPC this year. */
   npcCounts: Record<string, number>;
+  /** Budget per category (optional for older saves). */
+  pools?: Record<ActionPool, { used: number; max: number }>;
 }
 
 export interface PendingEvent {

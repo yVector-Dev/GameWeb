@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createNewGame, goClubbing, interact, invest, performCareerAction, withdraw, EngineError } from '../src/engine';
 import { orientationOf, preferenceFor } from '../src/engine/character';
 import { startJob } from '../src/engine/career';
+import { budgetFor } from '../src/engine/guards';
 import type { YearContext } from '../src/engine/context';
 import { processInvestmentsYear } from '../src/engine/extras';
 import { createNpc } from '../src/engine/people';
@@ -16,6 +17,7 @@ function adult(): GameState {
   s.year += 25;
   s.pending = null;
   s.character.money = 10000;
+  s.actions = budgetFor(25);
   s.npcs = s.npcs.filter((n) => n.relation !== 'partner' && n.relation !== 'spouse');
   return s;
 }
@@ -41,8 +43,7 @@ describe('friends to lovers and intimacy', () => {
     expect(interactionsFor(s, other).some((v) => v.id === 'confess')).toBe(false);
     let tries = s;
     for (let i = 0; i < 6 && tries.npcs.find((n) => n.id === friend.id)!.relation === 'friend'; i++) {
-      tries.actions.used = 0;
-      tries.actions.npcCounts = {};
+      tries.actions = budgetFor(tries.character.age);
       tries.npcs.find((n) => n.id === friend.id)!.bond = 95;
       tries = interact(tries, friend.id, 'confess');
     }

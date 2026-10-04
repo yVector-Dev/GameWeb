@@ -1,3 +1,4 @@
+import { addCondition } from './life';
 import { getCountry, wageRatio } from '../content/countries';
 import {
   EngineError,
@@ -18,7 +19,7 @@ import {
   transition,
 } from './core';
 import type { YearContext } from './context';
-import { assertCanAct, spendAction } from './guards';
+import { assertCanAct, poolLeft, spendAction } from './guards';
 import { createNpc, randomFirstName } from './people';
 import type { Rng } from './rng';
 import type { DatingPreference, Delta, GameState, Gender, NPC, Params } from './types';
@@ -97,7 +98,7 @@ export function interactionsFor(state: GameState, npc: NPC): InteractionView[] {
   const age = state.character.age;
   const adult = age >= 18;
   const used = state.actions.npcCounts[npc.id] ?? 0;
-  const outOfActions = state.actions.used >= state.actions.max;
+  const outOfActions = poolLeft(state, 'social') <= 0;
   const limitReached = used >= MAX_INTERACTIONS_PER_NPC;
   const money = state.character.money;
   const views: InteractionView[] = [];
@@ -178,7 +179,7 @@ export function interact(state: GameState, npcId: string, id: InteractionId): Ga
     if (!view.available) throw new EngineError((view.reason ?? 'error.interactionUnavailable').replace(/^error\./, ''));
 
     if (view.usesAction) {
-      spendAction(s);
+      spendAction(s, 'social');
       s.actions.npcCounts[npc.id] = (s.actions.npcCounts[npc.id] ?? 0) + 1;
     }
     const deltas: Delta[] = [];
@@ -342,7 +343,7 @@ export const CLUB_COST = 90;
 
 export function canGoClubbing(state: GameState): { ok: boolean; reason?: string } {
   if (state.character.age < 18) return { ok: false, reason: 'error.tooYoung' };
-  if (state.actions.used >= state.actions.max) return { ok: false, reason: 'error.noActions' };
+  if (poolLeft(state, 'social') <= 0) return { ok: false, reason: 'error.noActions' };
   if (state.character.money < CLUB_COST) return { ok: false, reason: 'error.notEnoughMoney' };
   return { ok: true };
 }
@@ -353,11 +354,11 @@ export function goClubbing(state: GameState): GameState {
     assertCanAct(s);
     const check = canGoClubbing(s);
     if (!check.ok) throw new EngineError((check.reason ?? 'error.requirements').replace(/^error\./, ''));
-    spendAction(s);
+    spendAction(s, 'social');
     const deltas: Delta[] = [];
     changeMoney(s, -CLUB_COST, deltas);
     const c = s.character;
-    const hookupChance = clamp(0.25 + c.stats.social / 250 + (c.traits.includes('outgoing') ? 0.1 : 0) - (c.age > 45 ? 0.15 : 0), 0.1, 0.75);
+    const hookupChance = clamp(0.25 + c.stats.social / 250 + (c.traits.includes('outgoing') ? 0.1 : 0) + ((c.stats.looks ?? 50) - 50) / 250 - (c.age > 45 ? 0.15 : 0), 0.1, 0.75);
     const roll = rng.next();
     let key: string;
     let tone: 'good' | 'bad' | 'neutral' = 'good';
@@ -372,6 +373,7 @@ export function goClubbing(state: GameState): GameState {
       key = 'club.hookup';
       if (rng.chance(0.06)) {
         changeStat(s, 'health', -5, deltas);
+        addCondition(s, 'std');
         key = 'club.hookupInfection';
         tone = 'bad';
       } else if (rng.chance(0.25)) {
@@ -401,13 +403,13 @@ export function goClubbing(state: GameState): GameState {
 
 export function findPartnerChance(state: GameState): number {
   const s = state.character.stats;
-  return clamp(0.25 + s.social / 200 + s.reputation / 400 + (s.happiness - 50) / 400, 0.1, 0.9);
+  return clamp(0.25 + s.social / 200 + s.reputation / 400 + (s.happiness - 50) / 400 + ((s.looks ?? 50) - 50) / 300, 0.1, 0.9);
 }
 
 export function canFindPartner(state: GameState): { ok: boolean; reason?: string } {
   if (state.character.age < 18) return { ok: false, reason: 'error.tooYoung' };
   if (currentPartner(state)) return { ok: false, reason: 'error.hasPartner' };
-  if (state.actions.used >= state.actions.max) return { ok: false, reason: 'error.noActions' };
+  if (poolLeft(state, 'social') <= 0) return { ok: false, reason: 'error.noActions' };
   if (state.character.money < FIND_PARTNER_COST) return { ok: false, reason: 'error.notEnoughMoney' };
   return { ok: true };
 }
@@ -423,7 +425,7 @@ export function findPartner(state: GameState): GameState {
     assertCanAct(s);
     const check = canFindPartner(s);
     if (!check.ok) throw new EngineError((check.reason ?? 'error.requirements').replace(/^error\./, ''));
-    spendAction(s);
+    spendAction(s, 'social');
     const deltas: Delta[] = [];
     changeMoney(s, -FIND_PARTNER_COST, deltas);
     if (rng.chance(findPartnerChance(s))) {
@@ -451,7 +453,7 @@ export function canAdopt(state: GameState): { ok: boolean; reason?: string } {
   if (state.character.age > 60) return { ok: false, reason: 'error.tooOld' };
   if (state.finance.housing === 'family') return { ok: false, reason: 'error.needOwnHome' };
   if (livingNpcs(state, 'child').length >= MAX_CHILDREN) return { ok: false, reason: 'error.maxChildren' };
-  if (state.actions.used >= state.actions.max) return { ok: false, reason: 'error.noActions' };
+  if (poolLeft(state, 'social') <= 0) return { ok: false, reason: 'error.noActions' };
   if (state.character.money < ADOPTION_COST) return { ok: false, reason: 'error.notEnoughMoney' };
   return { ok: true };
 }
@@ -461,7 +463,7 @@ export function adoptChild(state: GameState): GameState {
     assertCanAct(s);
     const check = canAdopt(s);
     if (!check.ok) throw new EngineError((check.reason ?? 'error.requirements').replace(/^error\./, ''));
-    spendAction(s);
+    spendAction(s, 'social');
     const deltas: Delta[] = [];
     changeMoney(s, -ADOPTION_COST, deltas);
     const child = createNpc(s, rng, {

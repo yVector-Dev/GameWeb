@@ -1,6 +1,6 @@
-import { CareerActions } from './ExtrasPanels';
 import { useState } from 'react';
 import { CAREERS } from '../../../content/careers';
+import { poolLeft } from '../../../engine';
 import { COURSES, getCourse } from '../../../content/courses';
 import { applyForJob, dropCourse, enrollCourse, quitJob, retire, takeLicenseTest } from '../../../engine';
 import { checkApplication, currentSalary, salaryFor, isPartTime, jobTitle, pensionFor, promotionStatus, RETIREMENT_MIN_AGE } from '../../../engine/career';
@@ -332,8 +332,14 @@ function MarketSection({ ctl }: { ctl: GameController }) {
       <h3 className="subsection-title">{t('work.market')}</h3>
       <p className="muted small">{t('work.marketIntro')}</p>
       {shown.length === 0 && <p className="empty">{t('work.noneEligible')}</p>}
-      <ul className="card-list">
-        {shown.map(({ career, check }) => (
+      {(['formal', 'informal'] as const).map((group) => {
+        const list = shown.filter(({ career }) => (group === 'informal') === Boolean(career.informal));
+        if (list.length === 0) return null;
+        return (
+          <div key={group} className="subblock">
+            <h4 className="subsection-title">{t(`work.${group}`)}</h4>
+            <ul className="card-list">
+        {list.map(({ career, check }) => (
           <li key={career.id} className="card">
             <div className="card__main">
               <p className="kicker">{t(`career.${career.id}.name`)}</p>
@@ -358,7 +364,7 @@ function MarketSection({ ctl }: { ctl: GameController }) {
               <button
                 type="button"
                 className="button button--primary"
-                disabled={!check.ok || game.actions.used >= game.actions.max || game.pending !== null}
+                disabled={!check.ok || poolLeft(game, 'work') <= 0 || game.pending !== null}
                 onClick={() => ctl.run((g) => applyForJob(g, career.id))}
               >
                 {t('work.apply')}
@@ -369,7 +375,10 @@ function MarketSection({ ctl }: { ctl: GameController }) {
             </div>
           </li>
         ))}
-      </ul>
+            </ul>
+          </div>
+        );
+      })}
       <button type="button" className="button button--ghost" onClick={() => setShowAll(!showAll)}>
         {showAll ? t('work.showEligible') : t('work.showAll')}
       </button>
@@ -404,13 +413,10 @@ export function CareerPanel({ ctl }: { ctl: GameController }) {
         {t('edu.title')}
       </h2>
       <SchoolSection game={game} />
-      <CareerActions ctl={ctl} context="school" />
       <CoursesSection ctl={ctl} />
-      <CareerActions ctl={ctl} context="uni" />
       <LicenseSection ctl={ctl} />
       <h2 className="section-title">{t('work.title')}</h2>
       <JobSection ctl={ctl} />
-      <CareerActions ctl={ctl} context="work" />
       <MarketSection ctl={ctl} />
       <HistorySection game={game} />
     </section>

@@ -128,7 +128,7 @@ export default {
   },
   tab: {
     life: 'Story',
-    activities: 'Activities',
+    activities: 'Actions',
     career: 'School & Work',
     people: 'People',
     money: 'Money',

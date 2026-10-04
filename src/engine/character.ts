@@ -1,5 +1,6 @@
 import { COUNTRIES } from '../content/countries';
 import { addLog, clamp, setFeedback } from './core';
+import { budgetFor } from './guards';
 import { createNpc, randomFirstName, randomSurname } from './people';
 import { Rng, seedFrom } from './rng';
 import type { Background, Character, DatingPreference, GameState, Gender, Orientation, Pronouns, Stats, TraitId } from './types';
@@ -94,6 +95,7 @@ export function createNewGame(options: NewGameOptions): GameState {
     social: clamp(rng.int(6, 14)),
     discipline: clamp(rng.int(5, 12)),
     reputation: clamp(rng.int(10, 18) + bgBonus),
+    looks: clamp(rng.int(20, 92)),
   };
   if (traits.includes('athletic')) stats.health = clamp(stats.health + 5);
 
@@ -161,7 +163,7 @@ export function createNewGame(options: NewGameOptions): GameState {
       debtYears: 0,
       boughtThisYear: [],
     },
-    actions: { used: 0, max: actionsForAge(0), counts: {}, npcCounts: {} },
+    actions: budgetFor(0),
     flags: {},
     counters: {},
     achievements: {},

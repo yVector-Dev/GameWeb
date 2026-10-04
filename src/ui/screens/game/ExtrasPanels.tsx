@@ -57,9 +57,8 @@ export function CareerActions({ ctl, context }: { ctl: GameController; context: 
   if (!contextActive(game, context)) return null;
   const actions = CAREER_ACTIONS.filter((a) => a.context === context && (a.minAge === undefined || game.character.age >= a.minAge));
   return (
-    <div className="block">
-      <h3 className="subsection-title">{t(`ca.title.${context}`)}</h3>
-      <p className="muted small">{t('ca.intro')}</p>
+    <div className="subblock">
+      <h4 className="subsection-title">{t(`ca.title.${context}`)}</h4>
       <div className="chip-buttons">
         {actions.map((a) => {
           const status = careerActionStatus(game, a);
@@ -78,13 +77,6 @@ export function CareerActions({ ctl, context }: { ctl: GameController; context: 
           );
         })}
       </div>
-      <ul className="plain-list small muted">
-        {actions.map((a) => (
-          <li key={a.id}>
-            <strong>{t(`ca.${a.id}.name`)}</strong>: {t(`ca.${a.id}.desc`)}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

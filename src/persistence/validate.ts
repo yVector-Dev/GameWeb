@@ -140,7 +140,7 @@ export function validateGameState(raw: unknown): GameState {
 
   const c = obj(s.character, 'character');
   const statsRaw = obj(c.stats, 'character.stats');
-  const stats = Object.fromEntries(STAT_KEYS.map((k) => [k, num(statsRaw[k], `character.stats.${k}`, 0, 100)])) as GameState['character']['stats'];
+  const stats = Object.fromEntries(STAT_KEYS.map((k) => [k, num(statsRaw[k] ?? (k === 'looks' ? 50 : undefined), `character.stats.${k}`, 0, 100)])) as GameState['character']['stats'];
   const hobbiesRaw = obj(c.hobbies, 'character.hobbies');
   const hobbies: GameState['character']['hobbies'] = {};
   for (const [k, value] of Object.entries(hobbiesRaw)) {
@@ -164,6 +164,15 @@ export function validateGameState(raw: unknown): GameState {
     hobbies,
     datingPreference: oneOf(c.datingPreference, 'character.datingPreference', ['any', 'm', 'f'] as const),
   };
+  const conditions = optional(c.conditions, (v) =>
+    arr(v, 'character.conditions', 20).map((x, i) => {
+      const o = obj(x, `character.conditions[${i}]`);
+      return { id: key(o.id, `character.conditions[${i}].id`), sinceAge: int(o.sinceAge, `character.conditions[${i}].sinceAge`, 0, 130), treated: bool(o.treated, `character.conditions[${i}].treated`) };
+    }),
+  );
+  if (conditions) character.conditions = conditions;
+  const prisonUntil = optional(c.prisonUntil, (v) => int(v, 'character.prisonUntil', 0, 200));
+  if (prisonUntil !== undefined) character.prisonUntil = prisonUntil;
 
   const ids = new Set<string>();
   const npcs = arr(s.npcs, 'npcs', 300).map((n, i) => {
@@ -266,7 +275,7 @@ export function validateGameState(raw: unknown): GameState {
         level: int(o.level, `career.history[${i}].level`, 0, CAREER_MAP[careerId].levels.length - 1),
         fromAge: int(o.fromAge, `career.history[${i}].fromAge`, 0, 130),
         toAge: int(o.toAge, `career.history[${i}].toAge`, 0, 130),
-        reason: oneOf(o.reason, `career.history[${i}].reason`, ['quit', 'fired', 'retired', 'laidoff', 'changed', 'died'] as const),
+        reason: oneOf(o.reason, `career.history[${i}].reason`, ['quit', 'fired', 'retired', 'laidoff', 'changed', 'died', 'agedOut', 'prison'] as const),
       };
     }),
     retired: bool(cr.retired, 'career.retired'),
@@ -328,13 +337,22 @@ export function validateGameState(raw: unknown): GameState {
   if (finance.lastProcessedAge > age) fail('finance.lastProcessedAge', 'ahead of character age');
 
   const a = obj(s.actions, 'actions');
-  const max = int(a.max, 'actions.max', 0, 10);
+  const max = int(a.max, 'actions.max', 0, 30);
   const actions: GameState['actions'] = {
     used: int(a.used, 'actions.used', 0, max),
     max,
     counts: intRecord(a.counts, 'actions.counts', 30),
     npcCounts: intRecord(a.npcCounts, 'actions.npcCounts', 300),
   };
+  if (a.pools !== undefined) {
+    const pools = obj(a.pools, 'actions.pools');
+    const read = (k: 'personal' | 'work' | 'social') => {
+      const p = obj(pools[k], `actions.pools.${k}`);
+      const pm = int(p.max, `actions.pools.${k}.max`, 0, 10);
+      return { used: int(p.used, `actions.pools.${k}.used`, 0, pm), max: pm };
+    };
+    actions.pools = { personal: read('personal'), work: read('work'), social: read('social') };
+  }
 
   const eventHistory: GameState['eventHistory'] = {};
   for (const [k, v] of Object.entries(obj(s.eventHistory, 'eventHistory'))) {

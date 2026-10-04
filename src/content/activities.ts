@@ -1,4 +1,4 @@
-import type { Condition, StatKey, TraitId } from '../engine/types';
+import type { ActionPool, Condition, StatKey, TraitId } from '../engine/types';
 
 // Yearly activities. Each one spends one action from the yearly budget.
 // Repeating the same activity in one year has diminishing returns (see
@@ -6,6 +6,8 @@ import type { Condition, StatKey, TraitId } from '../engine/types';
 
 export interface ActivityDef {
   id: string;
+  /** Which yearly action category this uses. */
+  pool: ActionPool;
   minAge: number;
   maxAge: number;
   gains: Partial<Record<StatKey, number>>;
@@ -31,13 +33,13 @@ export interface ActivityDef {
 }
 
 export const ACTIVITIES: ActivityDef[] = [
-  { id: 'cuddle', minAge: 0, maxAge: 2, gains: { happiness: 3 }, bondFamily: 3 },
-  { id: 'explore', minAge: 0, maxAge: 3, gains: { knowledge: 2, health: 1 }, traitBoost: ['curious'] },
-  { id: 'play', minAge: 3, maxAge: 12, gains: { health: 3, happiness: 3, social: 2 }, traitBoost: ['athletic', 'outgoing'] },
-  { id: 'read', minAge: 3, maxAge: 12, gains: { knowledge: 3, discipline: 1 }, schoolPerf: 4, traitBoost: ['curious'] },
-  { id: 'chores', minAge: 5, maxAge: 17, gains: { discipline: 3, reputation: 1 }, bondFamily: 3, traitBoost: ['diligent'] },
+  { id: 'cuddle', pool: 'personal', minAge: 0, maxAge: 2, gains: { happiness: 3 }, bondFamily: 3 },
+  { id: 'explore', pool: 'personal', minAge: 0, maxAge: 3, gains: { knowledge: 2, health: 1 }, traitBoost: ['curious'] },
+  { id: 'play', pool: 'personal', minAge: 3, maxAge: 12, gains: { health: 3, happiness: 3, social: 2 }, traitBoost: ['athletic', 'outgoing'] },
+  { id: 'read', pool: 'work', minAge: 3, maxAge: 12, gains: { knowledge: 3, discipline: 1 }, schoolPerf: 4, traitBoost: ['curious'] },
+  { id: 'chores', pool: 'personal', minAge: 5, maxAge: 17, gains: { discipline: 3, reputation: 1 }, bondFamily: 3, traitBoost: ['diligent'] },
   {
-    id: 'hobby',
+    id: 'hobby', pool: 'personal',
     minAge: 6,
     maxAge: 120,
     gains: { happiness: 3 },
@@ -45,7 +47,7 @@ export const ACTIVITIES: ActivityDef[] = [
     traitBoost: ['creative'],
   },
   {
-    id: 'study',
+    id: 'study', pool: 'work',
     minAge: 10,
     maxAge: 120,
     gains: { knowledge: 4, discipline: 2, happiness: -1 },
@@ -54,7 +56,7 @@ export const ACTIVITIES: ActivityDef[] = [
     assetBoost: [{ asset: 'computer', factor: 1.2 }],
   },
   {
-    id: 'exercise',
+    id: 'exercise', pool: 'personal',
     minAge: 10,
     maxAge: 120,
     gains: { health: 4, discipline: 1, happiness: 1 },
@@ -65,7 +67,7 @@ export const ACTIVITIES: ActivityDef[] = [
     ],
   },
   {
-    id: 'socialize',
+    id: 'socialize', pool: 'social',
     minAge: 12,
     maxAge: 120,
     gains: { social: 4, happiness: 3 },
@@ -74,9 +76,10 @@ export const ACTIVITIES: ActivityDef[] = [
     traitBoost: ['outgoing'],
     special: 'socialize',
   },
-  { id: 'rest', minAge: 12, maxAge: 120, gains: { happiness: 3, health: 2 }, traitBoost: ['easygoing'] },
+  { id: 'selfCare', pool: 'personal', minAge: 13, maxAge: 120, gains: { looks: 2, happiness: 1 }, cost: 40, costFromAge: 18, perYearLimit: 2 },
+  { id: 'rest', pool: 'personal', minAge: 12, maxAge: 120, gains: { happiness: 3, health: 2 }, traitBoost: ['easygoing'] },
   {
-    id: 'volunteer',
+    id: 'volunteer', pool: 'social',
     minAge: 14,
     maxAge: 120,
     gains: { reputation: 3, happiness: 2, social: 1 },
@@ -84,7 +87,7 @@ export const ACTIVITIES: ActivityDef[] = [
     perYearLimit: 2,
   },
   {
-    id: 'skill',
+    id: 'skill', pool: 'work',
     minAge: 16,
     maxAge: 75,
     gains: { knowledge: 2, discipline: 2 },
@@ -94,7 +97,7 @@ export const ACTIVITIES: ActivityDef[] = [
     assetBoost: [{ asset: 'computer', factor: 1.1 }],
   },
   {
-    id: 'sideGig',
+    id: 'sideGig', pool: 'work',
     minAge: 18,
     maxAge: 75,
     gains: { happiness: -1, health: -1 },

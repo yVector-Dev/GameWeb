@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ageUp, performActivity, EngineError } from '../src/engine';
 import { DIMINISHING } from '../src/engine/activities';
-import { actionsForAge } from '../src/engine/character';
+import { poolLeft, poolMaxForAge } from '../src/engine/guards';
 import { applyEffects } from '../src/engine/effects';
 import { Rng } from '../src/engine/rng';
 import { STAT_KEYS, type GameState } from '../src/engine/types';
@@ -45,29 +45,30 @@ describe('attribute limits', () => {
 });
 
 describe('action budget', () => {
-  it('gives an age-appropriate budget each year', () => {
-    expect(actionsForAge(0)).toBe(2);
-    expect(actionsForAge(8)).toBe(3);
-    expect(actionsForAge(15)).toBe(4);
-    expect(actionsForAge(30)).toBe(5);
-    expect(actionsForAge(70)).toBe(4);
+  it('gives an age-appropriate budget per category, with social a bit larger', () => {
+    expect(poolMaxForAge(0, 'work')).toBe(0);
+    expect(poolMaxForAge(30, 'personal')).toBe(4);
+    expect(poolMaxForAge(30, 'work')).toBe(3);
+    for (const age of [5, 15, 30, 70]) expect(poolMaxForAge(age, 'social')).toBeGreaterThan(poolMaxForAge(age, 'personal'));
   });
 
-  it('refuses activities once the budget is spent, until the next year', () => {
+  it('refuses activities once a category is spent, until the next year', () => {
     let s = adult();
     while (s.pending) s = advance(s, 0);
-    const max = s.actions.max;
+    const max = s.actions.pools!.personal.max;
     for (let i = 0; i < max; i++) s = performActivity(s, 'rest');
-    expect(s.actions.used).toBe(max);
-    expect(() => performActivity(s, 'study')).toThrowError(EngineError);
+    expect(poolLeft(s, 'personal')).toBe(0);
     try {
-      performActivity(s, 'study');
+      performActivity(s, 'exercise');
+      expect.unreachable();
     } catch (err) {
       expect((err as EngineError).code).toBe('noActions');
     }
+    // Other categories are separate.
+    expect(() => performActivity(s, 'study')).not.toThrow();
     s = advance(s, 1);
     expect(s.actions.used).toBe(0);
-    expect(() => performActivity(s, 'study')).not.toThrow();
+    expect(() => performActivity(s, 'exercise')).not.toThrow();
   });
 
   it('gives diminishing returns when repeating the same activity', () => {

@@ -2,7 +2,7 @@ import { getCountry } from '../content/countries';
 import { HOUSING } from '../content/items';
 import { checkAchievements } from './achievements';
 import { processCareerYear, jobTitle } from './career';
-import { actionsForAge } from './character';
+import { budgetFor } from './guards';
 import type { YearContext } from './context';
 import { addLog, changeStat, currentPartner, hasFlag, livingNpcs, setFeedback, transition, EngineError } from './core';
 import { processEducationYear } from './education';
@@ -10,6 +10,7 @@ import { scheduleEvent } from './effects';
 import { processScheduled, rollRandomEvents } from './events';
 import { processFinanceYear } from './finance';
 import { processInvestmentsYear } from './extras';
+import { diseaseDeathRisk, inPrison, processHealthYear, processPrisonYear } from './life';
 import { processRelationshipsYear } from './relationships';
 import type { Rng } from './rng';
 import type { Delta, GameState } from './types';
@@ -34,7 +35,7 @@ export function deathChance(age: number, health: number): number {
 function deathCause(state: GameState, rng: Rng): string {
   const { age } = state.character;
   const health = state.character.stats.health;
-  if (health < 25) return 'death.illness';
+  if (health < 25 || (state.character.conditions ?? []).some((c) => ['cancer', 'heartDisease', 'dementia'].includes(c.id))) return 'death.illness';
   if (hasFlag(state, 'smoker') && age > 40 && rng.chance(0.5)) return 'death.heart';
   if (age >= 80) return 'death.oldAge';
   if (state.character.traits.includes('reckless') && rng.chance(0.5)) return 'death.accident';
@@ -72,6 +73,7 @@ function processNaturalStats(state: GameState, ctx: YearContext): void {
     if (whole > 0) changeStat(state, 'health', -whole, ctx.deltas);
   }
   if (hasFlag(state, 'smoker')) changeStat(state, 'health', -2, ctx.deltas);
+  if (age > 40 && rng.chance(0.4)) changeStat(state, 'looks', -1, ctx.deltas);
   if (age >= 60 && !(ctx.prevCounts.study > 0) && !(ctx.prevCounts.hobby > 0)) {
     if (rng.chance(0.5)) changeStat(state, 'knowledge', -1, ctx.deltas);
   }
@@ -136,7 +138,6 @@ export function ageUp(state: GameState): GameState {
     };
     s.character.age += 1;
     s.year += 1;
-    s.actions = { used: 0, max: actionsForAge(s.character.age), counts: {}, npcCounts: {} };
     s.career.appliedThisYear = [];
     s.finance.boughtThisYear = [];
 
@@ -147,6 +148,9 @@ export function ageUp(state: GameState): GameState {
     processFinanceYear(s, ctx);
     processInvestmentsYear(s, ctx);
     processNaturalStats(s, ctx);
+    processHealthYear(s, ctx);
+    processPrisonYear(s, ctx);
+    s.actions = budgetFor(s.character.age, inPrison(s));
     if (ctx.deltas.length > 0) addLog(s, 'log.year.changes', { deltas: ctx.deltas });
 
     const deltas: Delta[] = [...ctx.deltas];
@@ -155,7 +159,7 @@ export function ageUp(state: GameState): GameState {
       deltas.push({ key: 'delta.money', amount: ledger.net, money: true });
     }
 
-    if (rng.chance(Math.min(1, deathChance(s.character.age, s.character.stats.health) * getCountry(s.character.country).mortality))) {
+    if (rng.chance(Math.min(1, deathChance(s.character.age, s.character.stats.health) * getCountry(s.character.country).mortality + diseaseDeathRisk(s)))) {
       die(s, rng);
       checkAchievements(s);
       setFeedback(s, { titleKey: 'feedback.died', titleParams: { age: s.character.age }, deltas: [], tone: 'milestone' });

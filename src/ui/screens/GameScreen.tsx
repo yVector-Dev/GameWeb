@@ -1,11 +1,10 @@
 import { displayRate, getCountry } from '../../content/countries';
 import { setCurrency } from '../../i18n/translate';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ageUp, canAgeUp, resolveChoice } from '../../engine';
+import { actionsLeft, ageUp, canAgeUp, POOLS, resolveChoice } from '../../engine';
 import type { GameState } from '../../engine/types';
 import type { KeyValueStore } from '../../persistence/storage';
 import { downloadSave, type Notify } from '../App';
-import { Pips } from '../components/Bits';
 import { Dialog } from '../components/Dialog';
 import { SettingsBar, type SettingsProps } from '../components/SettingsBar';
 import { useGameController } from '../hooks/useGameController';
@@ -13,7 +12,7 @@ import { useI18n } from '../i18n';
 import { lifeStage, statusLine } from '../status';
 import { EndScreen } from './EndScreen';
 import { AchievementsPanel } from './game/AchievementsPanel';
-import { ActivitiesPanel } from './game/ActivitiesPanel';
+import { ActivitiesPanel, PoolBudget } from './game/ActivitiesPanel';
 import { AttributesPanel } from './game/AttributesPanel';
 import { CareerPanel } from './game/CareerPanel';
 import { EventDialog, OutcomeDialog } from './game/EventDialog';
@@ -132,7 +131,7 @@ export function GameScreen({ initialGame, slot, store, settings, notify, onQuit,
   }
 
   const ageCheck = canAgeUp(game);
-  const left = game.actions.max - game.actions.used;
+  const left = actionsLeft(game);
   const doAgeUp = () => {
     if (ctl.run(ageUp) && isNarrow()) setTab('story');
   };
@@ -189,7 +188,11 @@ export function GameScreen({ initialGame, slot, store, settings, notify, onQuit,
 
       <footer className="ageup-bar">
         <div className="ageup-bar__info">
-          <Pips used={game.actions.used} max={game.actions.max} label={t('actions.remaining', { left, max: game.actions.max })} />
+          <span className="ageup-bar__pools">
+            {POOLS.map((pool) => (
+              <PoolBudget key={pool} game={game} pool={pool} compact />
+            ))}
+          </span>
           <span className="small">{left > 0 ? t('ageUp.left', { count: left }) : t('ageUp.none')}</span>
           {left > 0 && <span className="muted small ageup-bar__hint">{t('ageUp.hint')}</span>}
         </div>

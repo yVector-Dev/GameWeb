@@ -14,6 +14,7 @@ import {
 } from '../../../engine/relationships';
 import type { DatingPreference, GameState, NPC } from '../../../engine/types';
 import { Meter } from '../../components/Bits';
+import { PoolBudget } from './ActivitiesPanel';
 import { ConfirmDialog } from '../../components/Dialog';
 import type { GameController } from '../../hooks/useGameController';
 import { useI18n } from '../../i18n';
@@ -172,6 +173,9 @@ export function PeoplePanel({ ctl }: { ctl: GameController }) {
         {t('people.title')}
       </h2>
       <p className="muted small">{t('people.interactionsNote')}</p>
+      <div className="budget">
+        <PoolBudget game={game} pool="social" />
+      </div>
       <RomanceTools ctl={ctl} />
       {GROUPS.map((group) => {
         const people = game.npcs.filter((n) => n.alive && group.relations.includes(n.relation)).sort((a, b) => b.bond - a.bond);

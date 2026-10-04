@@ -18,7 +18,7 @@ import {
 import { currentSalary, jobTitle } from './career';
 import { applyEffects } from './effects';
 import { isInSchool } from './education';
-import { assertCanAct, spendAction } from './guards';
+import { assertCanAct, poolLeft, spendAction } from './guards';
 import type { Rng } from './rng';
 import type { Delta, GameState, InvestmentKind, LogTone, Params } from './types';
 import { INVESTMENT_KINDS } from './types';
@@ -317,7 +317,7 @@ export function careerActionStatus(state: GameState, def: CareerActionDef): { ok
   if (def.minAge !== undefined && state.character.age < def.minAge) return { ok: false, reason: 'error.tooYoung' };
   if (def.available && !def.available(state)) return { ok: false, reason: 'error.requirements' };
   if ((state.actions.counts[`ca_${def.id}`] ?? 0) > 0) return { ok: false, reason: 'error.onceAYear' };
-  if (state.actions.used >= state.actions.max) return { ok: false, reason: 'error.noActions' };
+  if (poolLeft(state, 'work') <= 0) return { ok: false, reason: 'error.noActions' };
   if ((def.cost ?? 0) > state.character.money) return { ok: false, reason: 'error.notEnoughMoney' };
   return { ok: true };
 }
@@ -329,7 +329,7 @@ export function performCareerAction(state: GameState, id: string): GameState {
     assertCanAct(s);
     const status = careerActionStatus(s, def);
     if (!status.ok) throw new EngineError((status.reason ?? 'error.requirements').replace(/^error\./, ''));
-    spendAction(s);
+    spendAction(s, 'work');
     s.actions.counts[`ca_${def.id}`] = 1;
     const deltas: Delta[] = [];
     if (def.cost) changeMoney(s, -def.cost, deltas);

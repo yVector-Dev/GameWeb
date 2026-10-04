@@ -81,6 +81,14 @@ A dificuldade sai dessas proporções, e não de regras especiais:
 - **Investimentos**: títulos públicos (baixo risco), fundo de ações (risco médio, com anos de queda) e criptomoedas (alto risco, com quedas fortes). Os rendimentos são sorteados a cada ano e entram no patrimônio.
 - **Escola, faculdade e trabalho**: ações extras uma vez por ano. Na escola: clube, pedir ajuda à professora, estudar para as provas e matar aula. Na faculdade: grupo de estudos, estágio, pesquisa e festa. No trabalho: hora extra, networking, treinamento, pedir bônus e pedir promoção.
 
+## Categorias de ações, saúde e vida fora da lei
+
+- **Três categorias de ações por ano**, cada uma com seu próprio limite: **Pessoal** (exercício, descanso, autocuidado, médico, hobbies), **Trabalho e estudos** (estudar, habilidades, ações da escola/faculdade/emprego, candidaturas) e **Social** (socializar, interações com pessoas, balada, cassino, crime, mudar de país). A categoria social tem sempre uma ação a mais que a pessoal.
+- **Aparência** (novo atributo): ajuda a namorar e em profissões como modelo; cai devagar após os 40.
+- **Doenças**: gripe, osso quebrado, depressão, IST, diabetes, pressão alta, doença cardíaca, câncer e demência. Algumas passam sozinhas, outras precisam de médico; as crônicas só são controladas. O custo do tratamento depende da rede pública do país, e doenças aumentam o risco de morte.
+- **Trabalhos informais e de fama**, cada um com uma exigência própria: camelô, motorista de app (carteira + carro), personal trainer (saúde e esporte), tatuador (arte), DJ (música e social), youtuber (social + computador, renda instável), modelo (aparência, até 40 anos), jogador de futebol (saúde e esporte, até 36), ator/atriz pornô (aparência e social, até 50, perde reputação) e jogador de pôquer (conhecimento e disciplina, renda instável).
+- **Risco**: loteria, cassino, crimes (furto, batedor de carteira, arrombamento, golpe) com prisão para adultos, recurso com advogado, cirurgia plástica e emigração para outro país.
+
 ## Arquitetura
 
 ```

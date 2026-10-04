@@ -27,6 +27,14 @@ export interface CareerDef {
   creative?: boolean;
   /** Teenagers in school may hold this job part-time. */
   teenFriendly?: boolean;
+  /** Informal or fame careers, listed separately in the job market. */
+  informal?: boolean;
+  /** Must leave this career after this age (sports, modelling…). */
+  maxAge?: number;
+  /** Yearly income varies between 0% and 220% of the salary. */
+  volatile?: boolean;
+  /** Yearly reputation change while working here. */
+  yearlyReputation?: number;
   /** Childhood dream category this career satisfies. */
   dream?: 'health' | 'creative' | 'tech' | 'teach' | 'justice' | 'business' | 'food';
 }
@@ -240,6 +248,141 @@ export const CAREERS: CareerDef[] = [
       { salary: 30000, minYears: 0, minPerf: 0 },
       { salary: 62000, minYears: 2, minPerf: 65 },
       { salary: 95000, minYears: 3, minPerf: 75 },
+    ],
+  },
+
+  // ── Informal, gig and fame careers: each needs a specific profile ───────
+  {
+    id: 'street_vendor',
+    minAge: 16,
+    requires: [],
+    keyStat: 'social',
+    informal: true,
+    teenFriendly: true,
+    levels: [
+      { salary: 9000, minYears: 0, minPerf: 0 },
+      { salary: 16000, minYears: 2, minPerf: 55 },
+      { salary: 30000, minYears: 3, minPerf: 70, requires: [{ type: 'stat', stat: 'discipline', min: 50 }] },
+    ],
+  },
+  {
+    id: 'app_driver',
+    minAge: 18,
+    requires: [{ type: 'flag', flag: 'license' }, { type: 'any', of: [{ type: 'asset', asset: 'used_car' }, { type: 'asset', asset: 'new_car' }] }],
+    keyStat: 'discipline',
+    informal: true,
+    levels: [
+      { salary: 17000, minYears: 0, minPerf: 0 },
+      { salary: 24000, minYears: 2, minPerf: 65 },
+    ],
+  },
+  {
+    id: 'personal_trainer',
+    minAge: 18,
+    requires: [{ type: 'stat', stat: 'health', min: 70 }, { type: 'hobby', hobby: 'sports', min: 40 }],
+    keyStat: 'health',
+    informal: true,
+    levels: [
+      { salary: 18000, minYears: 0, minPerf: 0 },
+      { salary: 32000, minYears: 2, minPerf: 60 },
+      { salary: 55000, minYears: 3, minPerf: 72, requires: [{ type: 'stat', stat: 'reputation', min: 50 }] },
+    ],
+  },
+  {
+    id: 'tattoo',
+    minAge: 18,
+    requires: [{ type: 'hobby', hobby: 'art', min: 50 }],
+    keyStat: 'discipline',
+    informal: true,
+    creative: true,
+    levels: [
+      { salary: 15000, minYears: 0, minPerf: 0 },
+      { salary: 35000, minYears: 3, minPerf: 62 },
+      { salary: 65000, minYears: 4, minPerf: 75, requires: [{ type: 'stat', stat: 'reputation', min: 55 }] },
+    ],
+  },
+  {
+    id: 'dj',
+    minAge: 18,
+    requires: [{ type: 'hobby', hobby: 'music', min: 40 }, { type: 'stat', stat: 'social', min: 50 }],
+    keyStat: 'social',
+    informal: true,
+    creative: true,
+    levels: [
+      { salary: 12000, minYears: 0, minPerf: 0 },
+      { salary: 40000, minYears: 2, minPerf: 65, requires: [{ type: 'stat', stat: 'reputation', min: 45 }] },
+      { salary: 130000, minYears: 3, minPerf: 80, requires: [{ type: 'stat', stat: 'reputation', min: 70 }] },
+    ],
+  },
+  {
+    id: 'youtuber',
+    minAge: 14,
+    requires: [{ type: 'stat', stat: 'social', min: 55 }, { type: 'asset', asset: 'computer' }],
+    keyStat: 'social',
+    informal: true,
+    creative: true,
+    teenFriendly: true,
+    volatile: true,
+    levels: [
+      { salary: 4000, minYears: 0, minPerf: 0 },
+      { salary: 20000, minYears: 2, minPerf: 62, requires: [{ type: 'stat', stat: 'reputation', min: 40 }] },
+      { salary: 70000, minYears: 2, minPerf: 72, requires: [{ type: 'stat', stat: 'reputation', min: 60 }] },
+      { salary: 300000, minYears: 3, minPerf: 85, requires: [{ type: 'stat', stat: 'reputation', min: 80 }] },
+    ],
+  },
+  {
+    id: 'model',
+    minAge: 16,
+    maxAge: 40,
+    requires: [{ type: 'stat', stat: 'looks', min: 75 }],
+    keyStat: 'looks',
+    informal: true,
+    teenFriendly: true,
+    levels: [
+      { salary: 20000, minYears: 0, minPerf: 0 },
+      { salary: 60000, minYears: 2, minPerf: 65, requires: [{ type: 'stat', stat: 'looks', min: 80 }] },
+      { salary: 180000, minYears: 3, minPerf: 78, requires: [{ type: 'stat', stat: 'looks', min: 85 }, { type: 'stat', stat: 'reputation', min: 60 }] },
+    ],
+  },
+  {
+    id: 'footballer',
+    minAge: 16,
+    maxAge: 36,
+    requires: [{ type: 'stat', stat: 'health', min: 75 }, { type: 'hobby', hobby: 'sports', min: 60 }],
+    keyStat: 'health',
+    informal: true,
+    teenFriendly: true,
+    levels: [
+      { salary: 8000, minYears: 0, minPerf: 0 },
+      { salary: 60000, minYears: 2, minPerf: 68, requires: [{ type: 'hobby', hobby: 'sports', min: 70 }] },
+      { salary: 450000, minYears: 3, minPerf: 82, requires: [{ type: 'hobby', hobby: 'sports', min: 85 }, { type: 'stat', stat: 'reputation', min: 70 }] },
+    ],
+  },
+  {
+    id: 'adult_actor',
+    minAge: 18,
+    maxAge: 50,
+    requires: [{ type: 'stat', stat: 'looks', min: 65 }, { type: 'stat', stat: 'social', min: 45 }],
+    keyStat: 'looks',
+    informal: true,
+    yearlyReputation: -1,
+    levels: [
+      { salary: 25000, minYears: 0, minPerf: 0 },
+      { salary: 70000, minYears: 2, minPerf: 65 },
+      { salary: 160000, minYears: 3, minPerf: 78, requires: [{ type: 'stat', stat: 'looks', min: 75 }] },
+    ],
+  },
+  {
+    id: 'poker',
+    minAge: 18,
+    requires: [{ type: 'stat', stat: 'knowledge', min: 60 }, { type: 'stat', stat: 'discipline', min: 55 }],
+    keyStat: 'knowledge',
+    informal: true,
+    volatile: true,
+    levels: [
+      { salary: 10000, minYears: 0, minPerf: 0 },
+      { salary: 40000, minYears: 2, minPerf: 66 },
+      { salary: 150000, minYears: 3, minPerf: 80, requires: [{ type: 'stat', stat: 'reputation', min: 55 }] },
     ],
   },
 ];

@@ -74,6 +74,7 @@ export function checkApplication(state: GameState, careerId: string): ApplyCheck
   if (career.hidden) return { ...base, ok: false, reason: 'error.hiddenCareer' };
   if (age < career.minAge) return { ...base, ok: false, reason: 'error.tooYoung' };
   if (state.career.retired && age >= 75) return { ...base, ok: false, reason: 'error.tooOld' };
+  if (career.maxAge !== undefined && age > career.maxAge) return { ...base, ok: false, reason: 'error.tooOld' };
   if (state.career.job?.careerId === careerId) return { ...base, ok: false, reason: 'error.alreadyInCareer' };
   if (isInSchool(state) && !career.teenFriendly) return { ...base, ok: false, reason: 'error.stillInSchool' };
   if (state.career.appliedThisYear.includes(careerId)) return { ...base, ok: false, reason: 'error.appliedThisYear' };
@@ -124,7 +125,7 @@ export function applyForJob(state: GameState, careerId: string): GameState {
     assertCanAct(s);
     const check = checkApplication(s, careerId);
     if (!check.ok) throw new EngineError((check.reason ?? 'error.requirements').replace(/^error\./, ''));
-    spendAction(s);
+    spendAction(s, 'work');
     s.career.appliedThisYear.push(careerId);
     const title = jobTitle(careerId, check.startLevel, s);
     const deltas: Delta[] = [];
@@ -240,7 +241,15 @@ export function processCareerYear(state: GameState, ctx: YearContext): void {
     return;
   }
   const career = getCareer(job.careerId);
-  const salary = currentSalary(state);
+  if (career.maxAge !== undefined && c.age > career.maxAge) {
+    const title = jobTitle(job.careerId, job.level, state);
+    closeJob(state, 'agedOut');
+    addLog(state, 'log.job.agedOut', { tone: 'milestone', params: { job: title } });
+    return;
+  }
+  // Volatile careers (streaming, poker) earn very different amounts each year.
+  const salary = career.volatile ? Math.round(currentSalary(state) * ctx.rng.next() * 2.2) : currentSalary(state);
+  if (career.yearlyReputation) changeStat(state, 'reputation', career.yearlyReputation, ctx.deltas);
   ctx.income.push({ key: 'ledger.salary', params: { job: jobTitle(job.careerId, job.level, state) }, amount: salary });
   state.career.lastSalary = salaryFor(state, job.careerId, job.level);
   state.career.experience[job.careerId] = (state.career.experience[job.careerId] ?? 0) + 1;
