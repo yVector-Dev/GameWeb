@@ -1,3 +1,4 @@
+import { getCountry } from '../content/countries';
 import { COURSE_MAP, getCourse, type CourseDef } from '../content/courses';
 import { checkAll } from './conditions';
 import {
@@ -64,7 +65,7 @@ export interface TuitionBreakdown {
 
 export function tuitionFor(state: GameState, enrollment: Pick<Enrollment, 'courseId' | 'funding' | 'scholarship'>): TuitionBreakdown {
   const course = getCourse(enrollment.courseId);
-  const base = course.tuition;
+  const base = Math.round(course.tuition * getCountry(state.character.country).tuition);
   const scholarship = Math.round(base * enrollment.scholarship);
   let remaining = base - scholarship;
   let family = 0;

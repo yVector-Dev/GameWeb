@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CAREERS } from '../../../content/careers';
 import { COURSES, getCourse } from '../../../content/courses';
 import { applyForJob, dropCourse, enrollCourse, quitJob, retire, takeLicenseTest } from '../../../engine';
-import { checkApplication, currentSalary, isPartTime, jobTitle, pensionFor, promotionStatus, RETIREMENT_MIN_AGE } from '../../../engine/career';
+import { checkApplication, currentSalary, salaryFor, isPartTime, jobTitle, pensionFor, promotionStatus, RETIREMENT_MIN_AGE } from '../../../engine/career';
 import { describeRequirements } from '../../../engine/conditions';
 import {
   canBorrowForStudies,
@@ -109,7 +109,7 @@ function CoursesSection({ ctl }: { ctl: GameController }) {
                 <p className="card__meta">
                   {t('edu.kindLabel', { kind: { t: `courseKind.${course.kind}` }, years: { t: 'edu.duration', p: { count: course.years } } })}
                   {' · '}
-                  {t('edu.tuition', { amount: { money: course.tuition } })}
+                  {t('edu.tuition', { amount: { money: tuitionFor(game, { courseId: course.id, funding: 'savings', scholarship: 0 }).base } })}
                 </p>
                 <p className="card__desc">{t(`course.${course.id}.desc`)}</p>
                 <Requirements items={reqs} />
@@ -338,16 +338,16 @@ function MarketSection({ ctl }: { ctl: GameController }) {
               <p className="kicker">{t(`career.${career.id}.name`)}</p>
               <h4 className="card__title">{p(jobTitle(career.id, check.startLevel, game))}</h4>
               <p className="card__meta">
-                {t('work.salary', { amount: { money: career.levels[check.startLevel].salary } })}
+                {t('work.salary', { amount: { money: salaryFor(game, career.id, check.startLevel) } })}
                 {check.ok && <> · {t('work.chance', { pct: pct(check.chance) })}</>}
               </p>
               <Requirements items={check.requirements} />
               <details className="career-path">
                 <summary>{t('work.path')}</summary>
                 <ol className="plain-list">
-                  {career.levels.map((level, i) => (
+                  {career.levels.map((_, i) => (
                     <li key={i}>
-                      {p(jobTitle(career.id, i, game))} · {money(level.salary)}
+                      {p(jobTitle(career.id, i, game))} · {money(salaryFor(game, career.id, i))}
                     </li>
                   ))}
                 </ol>

@@ -115,6 +115,8 @@ export interface Character {
   age: number;
   birthYear: number;
   city: string;
+  /** ISO country code; drives currency and economic difficulty. */
+  country: string;
   background: Background;
   stats: Stats;
   money: number;

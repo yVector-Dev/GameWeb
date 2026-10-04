@@ -1,3 +1,5 @@
+import { displayRate, getCountry } from '../../content/countries';
+import { setCurrency } from '../../i18n/translate';
 import { useMemo, useState } from 'react';
 import { buildSummary, relationParam } from '../../engine';
 import { jobTitle } from '../../engine/career';
@@ -15,6 +17,8 @@ interface Props {
 
 export function EndScreen({ game, onNewLife, onQuit, onExport }: Props) {
   const { t, p, money } = useI18n();
+  const country = getCountry(game.character.country);
+  setCurrency(country.currency, displayRate(country));
   const summary = useMemo(() => buildSummary(game), [game]);
   const [showStory, setShowStory] = useState(false);
   const name = `${summary.firstName} ${summary.lastName}`;

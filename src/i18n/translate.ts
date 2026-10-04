@@ -47,9 +47,29 @@ export function formatNumber(locale: Locale, value: number): string {
   return fmt.format(value);
 }
 
-/** Money in the game's single fictional currency (¤), formatted per language. */
+/** Currency of the life being played: real ISO code and display rate. */
+let activeCurrency: { code: string; rate: number } | null = null;
+const currencyCache = new Map<string, Intl.NumberFormat>();
+
+/** Sets the currency used to display money (null = neutral ¤ symbol). */
+export function setCurrency(code: string | null, rate = 1): void {
+  activeCurrency = code ? { code, rate } : null;
+}
+
+/** Money formatted per language, in the real currency of the current country. */
 export function formatMoney(locale: Locale, value: number, options: { signed?: boolean } = {}): string {
-  const amount = translate(locale, 'format.money', { amount: formatNumber(locale, Math.abs(Math.round(value))) });
+  let amount: string;
+  if (activeCurrency) {
+    const key = `${locale}|${activeCurrency.code}`;
+    let fmt = currencyCache.get(key);
+    if (!fmt) {
+      fmt = new Intl.NumberFormat(locale, { style: 'currency', currency: activeCurrency.code, maximumFractionDigits: 0, minimumFractionDigits: 0 });
+      currencyCache.set(key, fmt);
+    }
+    amount = fmt.format(Math.abs(Math.round(value * activeCurrency.rate)));
+  } else {
+    amount = translate(locale, 'format.money', { amount: formatNumber(locale, Math.abs(Math.round(value))) });
+  }
   if (value < 0) return `−${amount}`;
   if (options.signed && value > 0) return `+${amount}`;
   return amount;

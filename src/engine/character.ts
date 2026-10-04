@@ -1,4 +1,4 @@
-import { CITIES } from '../content/names';
+import { COUNTRIES } from '../content/countries';
 import { addLog, clamp, setFeedback } from './core';
 import { createNpc, randomFirstName, randomSurname } from './people';
 import { Rng, seedFrom } from './rng';
@@ -65,6 +65,7 @@ export function createNewGame(options: NewGameOptions): GameState {
   const rng = new Rng(seed);
   const now = new Date().toISOString();
 
+  const country = rng.weighted(COUNTRIES, (c) => c.weight)!;
   const background = rng.weighted<Background>(['struggling', 'modest', 'comfortable', 'wealthy'], (b) =>
     b === 'struggling' ? 22 : b === 'modest' ? 40 : b === 'comfortable' ? 28 : 10,
   )!;
@@ -91,7 +92,8 @@ export function createNewGame(options: NewGameOptions): GameState {
     pronouns: options.pronouns,
     age: 0,
     birthYear,
-    city: rng.pick(CITIES),
+    city: rng.pick(country.cities),
+    country: country.id,
     background,
     stats,
     money: 0,
@@ -210,15 +212,16 @@ export function createNewGame(options: NewGameOptions): GameState {
   if (p2) {
     addLog(state, 'log.birth.two', {
       tone: 'milestone',
-      params: { name: `${firstName} ${lastName}`, city: character.city, p1: p1.firstName, p2: p2.firstName },
+      params: { name: `${firstName} ${lastName}`, city: character.city, country: { t: `country.${country.id}` }, p1: p1.firstName, p2: p2.firstName },
     });
   } else {
     addLog(state, 'log.birth.one', {
       tone: 'milestone',
-      params: { name: `${firstName} ${lastName}`, city: character.city, p1: p1.firstName },
+      params: { name: `${firstName} ${lastName}`, city: character.city, country: { t: `country.${country.id}` }, p1: p1.firstName },
     });
   }
   addLog(state, `log.background.${background}`);
+  addLog(state, `econ.log.${country.difficulty}`, { params: { country: { t: `country.${country.id}` } } });
   const siblings = state.npcs.filter((n) => n.relation === 'sibling');
   if (siblings.length > 0) {
     addLog(state, 'log.siblings', { params: { count: siblings.length, names: siblings.map((s) => s.firstName).join(', ') } });

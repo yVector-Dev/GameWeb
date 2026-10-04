@@ -1,6 +1,34 @@
 // English game content: attributes, people, careers, courses, items, log
 // entries and system messages.
 export default {
+  country: {
+    US: 'United States',
+    CA: 'Canada',
+    GB: 'United Kingdom',
+    DE: 'Germany',
+    ES: 'Spain',
+    PT: 'Portugal',
+    JP: 'Japan',
+    BR: 'Brazil',
+    MX: 'Mexico',
+    AR: 'Argentina',
+    IN: 'India',
+    NG: 'Nigeria',
+  },
+  econ: {
+    easy: 'Easy',
+    normal: 'Moderate',
+    hard: 'Hard',
+    veryHard: 'Very hard',
+    label: 'Economy: {level}',
+    origin: '{city}, {country}',
+    log: {
+      easy: '{country} offers good wages, solid public services and a strong safety net.',
+      normal: 'Life in {country} has fair wages and real costs; effort pays off.',
+      hard: 'In {country}, wages are low compared to prices and the safety net is thin. Every choice counts.',
+      veryHard: 'In {country}, wages buy little, support is scarce and opportunities are hard to find. Life will be tough.',
+    },
+  },
   stat: {
     health: 'Health',
     happiness: 'Happiness',
@@ -240,8 +268,8 @@ export default {
   },
   log: {
     birth: {
-      two: 'You were born in {city} as {name}. Your family: {p1} and {p2}.',
-      one: 'You were born in {city} as {name}. {p1} is raising you alone.',
+      two: 'You were born in {city}, {country}, as {name}. Your family: {p1} and {p2}.',
+      one: 'You were born in {city}, {country}, as {name}. {p1} is raising you alone.',
     },
     background: {
       struggling: 'Money is always tight at home, but there is no shortage of love.',

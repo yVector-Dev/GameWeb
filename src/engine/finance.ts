@@ -11,6 +11,7 @@ import {
   MORTGAGE_YEARS,
   STUDENT_DEBT_RATE,
 } from '../content/items';
+import { getCountry, wageRatio } from '../content/countries';
 import { checkAll, describeRequirements, type RequirementStatus } from './conditions';
 import {
   EngineError,
@@ -114,7 +115,7 @@ export function processFinanceYear(state: GameState, ctx: YearContext): boolean 
   const pension = pensionFor(state);
   if (pension > 0) income.push({ key: 'ledger.pension', amount: pension });
   if (c.age === 18) {
-    const gift = GIFT_AT_18[c.background];
+    const gift = Math.round(GIFT_AT_18[c.background] * wageRatio(getCountry(c.country)));
     if (gift > 0 && livingNpcs(state, 'parent').length > 0) {
       income.push({ key: 'ledger.familyGift', amount: gift });
       addLog(state, 'log.finance.gift', { tone: 'good', params: { amount: { money: gift } } });
@@ -123,11 +124,12 @@ export function processFinanceYear(state: GameState, ctx: YearContext): boolean 
 
   const taxable = income.filter((l) => l.key === 'ledger.salary' || l.key === 'ledger.pension').reduce((a, l) => a + l.amount, 0);
   // Adults with little or no income receive a basic, untaxed top-up.
-  if (c.age >= 18 && taxable < SOCIAL_SUPPORT) {
-    income.push({ key: 'ledger.support', amount: SOCIAL_SUPPORT - taxable });
+  const support = Math.round(SOCIAL_SUPPORT * getCountry(c.country).safetyNet);
+  if (c.age >= 18 && taxable < support) {
+    income.push({ key: 'ledger.support', amount: support - taxable });
   }
   const expenses: LedgerLine[] = [...ctx.expenses];
-  const tax = incomeTax(taxable);
+  const tax = Math.round(incomeTax(taxable) * getCountry(c.country).tax);
   if (tax > 0) expenses.push({ key: 'ledger.tax', amount: tax });
   // Higher incomes come with higher everyday spending.
   const lifestyle = c.age >= 18 ? Math.round(LIFESTYLE_SHARE * Math.max(0, taxable - tax - LIFESTYLE_THRESHOLD)) : 0;

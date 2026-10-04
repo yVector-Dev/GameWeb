@@ -1,3 +1,4 @@
+import { getCountry, wageRatio } from '../content/countries';
 import { CAREER_MAP } from '../content/careers';
 import { loseJob, retireNow, startJob, jobTitle } from './career';
 import {
@@ -74,7 +75,8 @@ function applyEffect(state: GameState, effect: Effect, ctx: EffectContext): void
         state.finance.debt += -effect.amount - paid;
         ctx.deltas.push({ key: 'delta.debt', amount: -effect.amount - paid, money: true });
       } else {
-        changeMoney(state, effect.amount, ctx.deltas);
+        const gain = effect.amount > 0 ? Math.round(effect.amount * wageRatio(getCountry(c.country))) : effect.amount;
+        changeMoney(state, gain, ctx.deltas);
       }
       break;
     }

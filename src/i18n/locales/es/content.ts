@@ -1,6 +1,34 @@
 // Contenido del juego en español. Puestos y relaciones tienen variantes
 // _m/_f; la forma base es neutra y se usa con pronombres neutros.
 export default {
+  country: {
+    US: 'Estados Unidos',
+    CA: 'Canadá',
+    GB: 'Reino Unido',
+    DE: 'Alemania',
+    ES: 'España',
+    PT: 'Portugal',
+    JP: 'Japón',
+    BR: 'Brasil',
+    MX: 'México',
+    AR: 'Argentina',
+    IN: 'India',
+    NG: 'Nigeria',
+  },
+  econ: {
+    easy: 'Fácil',
+    normal: 'Moderada',
+    hard: 'Difícil',
+    veryHard: 'Muy difícil',
+    label: 'Economía: {level}',
+    origin: '{city}, {country}',
+    log: {
+      easy: '{country} ofrece buenos sueldos, servicios públicos sólidos y una red de protección fuerte.',
+      normal: 'La vida en {country} tiene sueldos razonables y costes reales; el esfuerzo compensa.',
+      hard: 'En {country}, los sueldos son bajos frente a los precios y la protección social es escasa. Cada decisión cuenta.',
+      veryHard: 'En {country}, el sueldo rinde poco, la ayuda es escasa y las oportunidades son difíciles. La vida será dura.',
+    },
+  },
   stat: {
     health: 'Salud',
     happiness: 'Felicidad',
@@ -375,8 +403,8 @@ export default {
   },
   log: {
     birth: {
-      two: 'Naciste en {city} y te llamaron {name}. Tu familia: {p1} y {p2}.',
-      one: 'Naciste en {city} y te llamaron {name}. {p1} te cría sin compañía.',
+      two: 'Naciste en {city}, {country}, y te llamaron {name}. Tu familia: {p1} y {p2}.',
+      one: 'Naciste en {city}, {country}, y te llamaron {name}. {p1} te cría sin compañía.',
     },
     background: {
       struggling: 'En casa el dinero siempre escasea, pero no falta el cariño.',

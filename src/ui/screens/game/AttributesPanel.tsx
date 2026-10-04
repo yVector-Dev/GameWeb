@@ -1,3 +1,4 @@
+import { getCountry } from '../../../content/countries';
 import type { GameState } from '../../../engine/types';
 import { HOBBY_IDS, STAT_KEYS } from '../../../engine/types';
 import { Meter, StatBar } from '../../components/Bits';
@@ -46,7 +47,10 @@ export function AttributesPanel({ game }: { game: GameState }) {
         </ul>
       )}
       <p className="muted small origin">
-        {c.city} · {t(`background.${c.background}`)}
+        {t('econ.origin', { city: c.city, country: { t: `country.${c.country}` } })} · {t(`background.${c.background}`)}
+      </p>
+      <p className="muted small">
+        {t('econ.label', { level: { t: `econ.${getCountry(c.country).difficulty}` } })}
       </p>
     </section>
   );

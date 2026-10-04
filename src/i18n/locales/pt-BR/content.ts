@@ -1,6 +1,34 @@
 // Conteúdo do jogo em português brasileiro. Cargos e relações têm variantes
 // _m/_f; a forma base é neutra e é usada para pronomes neutros.
 export default {
+  country: {
+    US: 'Estados Unidos',
+    CA: 'Canadá',
+    GB: 'Reino Unido',
+    DE: 'Alemanha',
+    ES: 'Espanha',
+    PT: 'Portugal',
+    JP: 'Japão',
+    BR: 'Brasil',
+    MX: 'México',
+    AR: 'Argentina',
+    IN: 'Índia',
+    NG: 'Nigéria',
+  },
+  econ: {
+    easy: 'Fácil',
+    normal: 'Moderada',
+    hard: 'Difícil',
+    veryHard: 'Muito difícil',
+    label: 'Economia: {level}',
+    origin: '{city}, {country}',
+    log: {
+      easy: '{country} oferece bons salários, serviços públicos sólidos e uma rede de proteção forte.',
+      normal: 'A vida em {country} tem salários razoáveis e custos reais; o esforço compensa.',
+      hard: 'Em {country}, os salários são baixos perto dos preços e a proteção social é pouca. Cada escolha conta.',
+      veryHard: 'Em {country}, o salário compra pouco, o apoio é escasso e as oportunidades são raras. A vida será dura.',
+    },
+  },
   stat: {
     health: 'Saúde',
     happiness: 'Felicidade',
@@ -357,8 +385,8 @@ export default {
   },
   log: {
     birth: {
-      two: 'Você nasceu em {city} e recebeu o nome {name}. Sua família: {p1} e {p2}.',
-      one: 'Você nasceu em {city} e recebeu o nome {name}. {p1} cria você sem companhia.',
+      two: 'Você nasceu em {city}, {country}, e recebeu o nome {name}. Sua família: {p1} e {p2}.',
+      one: 'Você nasceu em {city}, {country}, e recebeu o nome {name}. {p1} cria você sem companhia.',
     },
     background: {
       struggling: 'O dinheiro em casa é sempre curto, mas não falta amor.',

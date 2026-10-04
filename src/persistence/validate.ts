@@ -1,3 +1,4 @@
+import { COUNTRY_MAP, DEFAULT_COUNTRY } from '../content/countries';
 import { CAREER_MAP } from '../content/careers';
 import { COURSE_MAP } from '../content/courses';
 import { EVENT_MAP } from '../content/events';
@@ -155,6 +156,7 @@ export function validateGameState(raw: unknown): GameState {
     age,
     birthYear: int(c.birthYear, 'character.birthYear', 1000, 3000),
     city: cleanText(c.city, 'character.city', 40),
+    country: typeof c.country === 'string' && COUNTRY_MAP[c.country] ? c.country : DEFAULT_COUNTRY,
     background: oneOf(c.background, 'character.background', ['struggling', 'modest', 'comfortable', 'wealthy'] as const),
     stats,
     money: num(c.money, 'character.money', -1e12, 1e12),

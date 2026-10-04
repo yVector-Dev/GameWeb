@@ -1,3 +1,4 @@
+import { getCountry, wageRatio } from '../content/countries';
 import {
   EngineError,
   addCounter,
@@ -193,7 +194,7 @@ export function interact(state: GameState, npcId: string, id: InteractionId): Ga
         s.counters.askedMoneyAge = s.character.age;
         changeBond(s, npc, -3, deltas);
         if (rng.chance(view.chance ?? 0.5)) {
-          const amount = ASK_MONEY[s.character.background] * (s.character.age >= 18 ? 1 : 0.2);
+          const amount = ASK_MONEY[s.character.background] * (s.character.age >= 18 ? 1 : 0.2) * wageRatio(getCountry(s.character.country));
           changeMoney(s, Math.round(amount), deltas);
           key = 'interact.askMoney.ok';
           tone = 'good';

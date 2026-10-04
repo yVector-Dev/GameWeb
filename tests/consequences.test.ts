@@ -84,6 +84,7 @@ describe('future consequences', () => {
     s.character.age = 30;
     s.year += 30;
     s.character.money = 3000;
+    s.character.country = 'US';
     s.pending = null;
     s.scheduled = [];
     startEvent(s, new Rng(3), EVENT_MAP.shady_investment, 'random');

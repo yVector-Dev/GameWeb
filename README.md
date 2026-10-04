@@ -63,6 +63,16 @@ Não há rotas no servidor (a navegação é interna), então não é preciso co
 4. Quando surge uma **decisão obrigatória**, não é possível envelhecer nem agir até resolvê-la. Cada escolha mostra custos, requisitos e chance de sucesso, e o resultado aparece logo em seguida com as mudanças (“Conhecimento +4”).
 5. Ao morrer, você vê um **resumo da trajetória** com título narrativo, destaques, formação, carreira, finanças, relações e conquistas.
 
+## Países e moedas
+
+Cada vida nasce num país sorteado entre 12: Estados Unidos, Canadá, Reino Unido, Alemanha, Espanha, Portugal, Japão, Brasil, México, Argentina, Índia e Nigéria. O dinheiro aparece na moeda real do país (US$, R$, €, ¥, ₹, ₦…), formatado conforme o idioma. Os valores de câmbio, nível de preços, salários, rede de proteção, mensalidades, impostos, mortalidade e mercado de trabalho são aproximações da realidade (2024-2025), definidos em `src/content/countries.ts`.
+
+A dificuldade sai dessas proporções, e não de regras especiais:
+- **Fácil** (Canadá, Alemanha): salários altos em relação aos preços e proteção social forte.
+- **Moderada** (EUA, Reino Unido, Espanha, Japão): salários razoáveis; nos EUA a faculdade é cara.
+- **Difícil** (Brasil, México, Portugal): salário compra pouco e o auxílio é baixo.
+- **Muito difícil** (Argentina, Índia, Nigéria): renda muito baixa perto dos preços, quase nenhum auxílio, menos vagas e mais mortalidade.
+
 ## Arquitetura
 
 ```

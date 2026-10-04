@@ -1,4 +1,5 @@
 import { ACTIVITIES, ACTIVITY_MAP, type ActivityDef } from '../content/activities';
+import { getCountry, wageRatio } from '../content/countries';
 import { checkAll } from './conditions';
 import {
   EngineError,
@@ -50,7 +51,7 @@ function hobbyMultiplier(state: GameState, hobby: HobbyId): number {
 
 export function sideGigEarnings(state: GameState): number {
   const s = state.character.stats;
-  return Math.round(300 + s.social * 6 + s.knowledge * 4);
+  return Math.round((300 + s.social * 6 + s.knowledge * 4) * wageRatio(getCountry(state.character.country)));
 }
 
 export interface ActivityPreview {

@@ -1,3 +1,5 @@
+import { displayRate, getCountry } from '../../content/countries';
+import { setCurrency } from '../../i18n/translate';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { ageUp, canAgeUp, resolveChoice } from '../../engine';
 import type { GameState } from '../../engine/types';
@@ -95,6 +97,8 @@ export function GameScreen({ initialGame, slot, store, settings, notify, onQuit,
   const { t, money } = i18n;
   const ctl = useGameController(initialGame, slot, store);
   const game = ctl.game;
+  const country = getCountry(game.character.country);
+  setCurrency(country.currency, displayRate(country));
   const [tab, setTab] = useState<Tab>('story');
   const [panel, setPanel] = useState<PanelTab>('activities');
   const [menuOpen, setMenuOpen] = useState(false);

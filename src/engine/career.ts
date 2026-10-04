@@ -1,4 +1,5 @@
 import { CAREER_MAP, getCareer, type CareerDef } from '../content/careers';
+import { getCountry, wageRatio } from '../content/countries';
 import { checkAll, describeRequirements, type RequirementStatus } from './conditions';
 import { EngineError, addCounter, addLog, changeStat, clamp, setFeedback, setFlag, transition } from './core';
 import type { YearContext } from './context';
@@ -27,10 +28,15 @@ export function isPartTime(state: GameState): boolean {
   return isInSchool(state) || state.education.enrolled !== null;
 }
 
+/** Salary of a career level in this country (local price units). */
+export function salaryFor(state: GameState, careerId: string, level: number): number {
+  return Math.round(getCareer(careerId).levels[level].salary * wageRatio(getCountry(state.character.country)));
+}
+
 export function currentSalary(state: GameState): number {
   const job = state.career.job;
   if (!job) return 0;
-  const salary = getCareer(job.careerId).levels[job.level].salary;
+  const salary = salaryFor(state, job.careerId, job.level);
   return isPartTime(state) ? Math.round(salary * 0.5) : salary;
 }
 
@@ -56,6 +62,7 @@ export function applicationChance(state: GameState, careerId: string): number {
   let chance = 50 + (s[career.keyStat] - 50) * 0.6 + (s.reputation - 50) * 0.3 + (s.social - 50) * 0.2 + exp + readiness;
   if (state.flags.focus_work !== undefined && state.character.age <= 25) chance += 10;
   if (state.flags.criminal_record !== undefined) chance -= 15;
+  chance += getCountry(state.character.country).jobMarket;
   return clamp(Math.round(chance), 10, 95) / 100;
 }
 
@@ -173,7 +180,7 @@ export function pensionFor(state: GameState): number {
     const share = Math.min(0.5, state.career.yearsWorked * 0.0125);
     pension += Math.round(state.career.lastSalary * share);
   }
-  if (state.character.age >= STATE_PENSION_AGE) pension += STATE_PENSION;
+  if (state.character.age >= STATE_PENSION_AGE) pension += Math.round(STATE_PENSION * getCountry(state.character.country).safetyNet);
   return pension;
 }
 
@@ -235,7 +242,7 @@ export function processCareerYear(state: GameState, ctx: YearContext): void {
   const career = getCareer(job.careerId);
   const salary = currentSalary(state);
   ctx.income.push({ key: 'ledger.salary', params: { job: jobTitle(job.careerId, job.level, state) }, amount: salary });
-  state.career.lastSalary = career.levels[job.level].salary;
+  state.career.lastSalary = salaryFor(state, job.careerId, job.level);
   state.career.experience[job.careerId] = (state.career.experience[job.careerId] ?? 0) + 1;
   state.career.yearsWorked += 1;
   job.yearsInLevel += 1;

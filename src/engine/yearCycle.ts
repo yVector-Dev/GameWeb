@@ -1,3 +1,4 @@
+import { getCountry } from '../content/countries';
 import { HOUSING } from '../content/items';
 import { checkAchievements } from './achievements';
 import { processCareerYear, jobTitle } from './career';
@@ -152,7 +153,7 @@ export function ageUp(state: GameState): GameState {
       deltas.push({ key: 'delta.money', amount: ledger.net, money: true });
     }
 
-    if (rng.chance(deathChance(s.character.age, s.character.stats.health))) {
+    if (rng.chance(Math.min(1, deathChance(s.character.age, s.character.stats.health) * getCountry(s.character.country).mortality))) {
       die(s, rng);
       checkAchievements(s);
       setFeedback(s, { titleKey: 'feedback.died', titleParams: { age: s.character.age }, deltas: [], tone: 'milestone' });
