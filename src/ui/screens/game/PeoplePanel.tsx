@@ -15,7 +15,7 @@ import {
 import type { DatingPreference, GameState, NPC } from '../../../engine/types';
 import { Meter } from '../../components/Bits';
 import { PoolBudget } from './ActivitiesPanel';
-import { ConfirmDialog } from '../../components/Dialog';
+import { ConfirmDialog, Dialog } from '../../components/Dialog';
 import type { GameController } from '../../hooks/useGameController';
 import { useI18n } from '../../i18n';
 
@@ -39,6 +39,7 @@ function PersonCard({ npc, ctl }: { npc: NPC; ctl: GameController }) {
 
   const act = (id: InteractionId) => {
     if (id === 'breakup') {
+      setOpen(false);
       setConfirmBreakup(true);
       return;
     }
@@ -58,7 +59,7 @@ function PersonCard({ npc, ctl }: { npc: NPC; ctl: GameController }) {
         </div>
         {npc.alive && views.length > 0 && (
           <button type="button" className="button button--chip" aria-expanded={open} onClick={() => setOpen(!open)}>
-            {open ? '−' : '+'}
+            {t('people.talk')}
             <span className="sr-only"> {npc.firstName}</span>
           </button>
         )}
@@ -69,25 +70,40 @@ function PersonCard({ npc, ctl }: { npc: NPC; ctl: GameController }) {
         <span className="stat__value small">{num(npc.bond)}</span>
       </div>
       {open && npc.alive && (
-        <div className="person__actions">
-          <p className="muted small">{t('people.left', { count: left })}</p>
-          <div className="chip-buttons">
+        <Dialog title={npc.relation === 'pet' ? npc.firstName : `${npc.firstName} ${npc.lastName}`} kicker={`${rel} · ${t('people.age', { age })}`} onClose={() => setOpen(false)}>
+          <div className="person__bond">
+            <span className="small">{t('people.bond')}</span>
+            <Meter value={npc.bond} label={`${t('people.bond')}: ${npc.firstName}`} />
+            <span className="stat__value small">{num(npc.bond)}</span>
+          </div>
+          <p className="muted small">
+            {t('people.left', { count: left })} · <PoolBudget game={game} pool="social" compact />
+          </p>
+          <div className="tiles">
             {views.map((v) => (
               <button
                 key={v.id}
                 type="button"
-                className={`button button--chip${v.id === 'breakup' ? ' button--danger-ghost' : ''}`}
+                className={`tile${v.id === 'breakup' ? ' tile--danger' : ''}`}
                 disabled={!v.available}
                 title={v.available ? t(`interact.${v.id}.desc`, { name: npc.firstName }) : t(v.reason ?? 'error.interactionUnavailable')}
                 onClick={() => act(v.id)}
               >
-                {t(`interact.${v.id}.name`)}
-                {v.cost > 0 && <small> · {p({ money: v.cost })}</small>}
-                {v.chance !== undefined && <small> · {t('format.percent', { value: Math.round(v.chance * 100) })}</small>}
+                <span className="tile__name">{t(`interact.${v.id}.name`)}</span>
+                <span className="tile__meta">
+                  {v.available ? t(`interact.${v.id}.desc`, { name: npc.firstName }) : t(v.reason ?? 'error.interactionUnavailable')}
+                </span>
+                {(v.cost > 0 || v.chance !== undefined) && (
+                  <span className="tile__meta">
+                    {v.cost > 0 && p({ money: v.cost })}
+                    {v.cost > 0 && v.chance !== undefined && ' · '}
+                    {v.chance !== undefined && t('format.percent', { value: Math.round(v.chance * 100) })}
+                  </span>
+                )}
               </button>
             ))}
           </div>
-        </div>
+        </Dialog>
       )}
       {confirmBreakup && (
         <ConfirmDialog

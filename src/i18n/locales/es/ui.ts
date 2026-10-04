@@ -274,6 +274,7 @@ export default {
     died: 'hasta el final',
   },
   people: {
+    talk: 'Interactuar',
     title: 'Personas en tu vida',
     family: 'Familia',
     friends: 'Amistades',

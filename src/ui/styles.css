@@ -1683,3 +1683,5 @@ details > summary.subsection-title {
   gap: 8px;
 }
 .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tile--danger { border-color: color-mix(in srgb, var(--bad) 50%, transparent); }
+.tile--danger .tile__name { color: var(--bad); }

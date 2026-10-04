@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { useI18n } from '../i18n';
 
@@ -49,7 +50,7 @@ export function Dialog({ title, children, onClose, dismissible = true, wide = fa
     }
   };
 
-  return (
+  const content = (
     <div className="backdrop" onMouseDown={(e) => e.target === e.currentTarget && dismissible && onClose?.()}>
       <div
         ref={ref}
@@ -77,6 +78,8 @@ export function Dialog({ title, children, onClose, dismissible = true, wide = fa
       </div>
     </div>
   );
+  // Render at the page root so scrolling panels never clip the dialog.
+  return typeof document === 'undefined' ? content : createPortal(content, document.body);
 }
 
 interface ConfirmProps {
