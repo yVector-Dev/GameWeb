@@ -5,9 +5,7 @@ import type { GameState, Gender, NPC, RelationKind } from './types';
 
 export function randomGender(rng: Rng): Gender {
   const roll = rng.next();
-  if (roll < 0.48) return 'f';
-  if (roll < 0.96) return 'm';
-  return 'x';
+  return roll < 0.5 ? 'f' : 'm';
 }
 
 export function randomFirstName(rng: Rng, gender: Gender): string {

@@ -55,7 +55,7 @@ function pickTraits(rng: Rng): TraitId[] {
 
 export function randomIdentity(rng: Rng): { firstName: string; lastName: string; pronouns: Pronouns } {
   const roll = rng.next();
-  const pronouns: Pronouns = roll < 0.47 ? 'she' : roll < 0.94 ? 'he' : 'they';
+  const pronouns: Pronouns = roll < 0.5 ? 'she' : 'he';
   const gender: Gender = pronouns === 'she' ? 'f' : pronouns === 'he' ? 'm' : 'x';
   return { firstName: randomFirstName(rng, gender), lastName: randomSurname(rng), pronouns };
 }

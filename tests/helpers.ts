@@ -20,7 +20,7 @@ import { Rng } from '../src/engine/rng';
 import type { GameState } from '../src/engine/types';
 
 export function newGame(seed: number | string = 42): GameState {
-  return createNewGame({ firstName: 'Test', lastName: 'Player', pronouns: 'they', seed });
+  return createNewGame({ firstName: 'Test', lastName: 'Player', pronouns: 'she', seed });
 }
 
 /** Resolves a pending decision with the first available choice. */

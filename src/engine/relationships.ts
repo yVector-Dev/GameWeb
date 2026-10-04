@@ -280,7 +280,7 @@ export function canFindPartner(state: GameState): { ok: boolean; reason?: string
 function partnerGender(rng: Rng, pref: DatingPreference): Gender {
   if (pref === 'm' || pref === 'f') return pref;
   const roll = rng.next();
-  return roll < 0.48 ? 'f' : roll < 0.96 ? 'm' : 'x';
+  return roll < 0.5 ? 'f' : 'm';
 }
 
 export function findPartner(state: GameState): GameState {

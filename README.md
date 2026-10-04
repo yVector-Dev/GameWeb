@@ -166,7 +166,6 @@ Regras de redação: use frases completas por chave (não concatene fragmentos),
 - Os saves ficam só no `localStorage` do navegador; limpar os dados do site apaga as vidas. A exportação em JSON é o backup.
 - O balanceamento foi ajustado com simulações automáticas (`tests/balance.test.ts`), não com testes de jogadores reais; valores de salários, custos e chances provavelmente ainda pedem ajuste fino.
 - Os textos em português e espanhol foram escritos para este projeto, com redação neutra em gênero onde possível, mas não passaram por revisão de falantes nativos externos. O espanhol busca uma variante neutra entre Espanha e América Latina e pode soar regional em alguns termos.
-- Pessoas não binárias aparecem apenas entre amizades, parceiros e mentores; para familiares, o jogo usa rótulos gramaticais masculino/feminino.
 - O bundle tem cerca de 640 kB (210 kB com gzip), sobretudo por carregar o texto dos três idiomas de uma vez. Carregar idiomas sob demanda seria uma otimização possível.
 - Não há testes automatizados de navegador no repositório: a interface foi verificada com renderização no servidor (Vitest) e manualmente no Chromium (desktop e celular) durante o desenvolvimento.
 - Não há som, ilustrações nem animações de personagem: a experiência é deliberadamente tipográfica.

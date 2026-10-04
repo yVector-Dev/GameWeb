@@ -12,7 +12,7 @@ interface Props {
   onBack: () => void;
 }
 
-const PRONOUNS: Pronouns[] = ['she', 'he', 'they'];
+const PRONOUNS: Pronouns[] = ['she', 'he'];
 
 export function CreateScreen({ slots, onCreate, onBack }: Props) {
   const { t } = useI18n();
@@ -20,7 +20,7 @@ export function CreateScreen({ slots, onCreate, onBack }: Props) {
   const firstEmpty = slots.find((s) => s.status === 'empty')?.slot ?? 1;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [pronouns, setPronouns] = useState<Pronouns>('they');
+  const [pronouns, setPronouns] = useState<Pronouns>('she');
   const [seed, setSeed] = useState('');
   const [slot, setSlot] = useState(firstEmpty);
   const [confirmOverwrite, setConfirmOverwrite] = useState(false);
