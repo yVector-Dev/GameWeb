@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { HOME_PRICE, HOUSING, ITEMS } from '../../../content/items';
 import { buyItem, changeHousing, netWorth, payDebt, sellItem } from '../../../engine';
-import { checkHousing, checkPurchase, homeDownPayment, projectedExpenses } from '../../../engine/finance';
+import { checkHousing, checkPurchase, homeDownPayment, LIFESTYLE_SHARE, LIFESTYLE_THRESHOLD, projectedExpenses } from '../../../engine/finance';
 import type { GameState, Housing } from '../../../engine/types';
 import { Requirements } from '../../components/Bits';
 import { ConfirmDialog } from '../../components/Dialog';
@@ -50,6 +50,7 @@ function Projected({ game }: { game: GameState }) {
           ))}
         </dl>
       )}
+      <p className="muted small">{t('finance.lifestyleNote', { pct: Math.round(LIFESTYLE_SHARE * 100), amount: { money: LIFESTYLE_THRESHOLD } })}</p>
       <p className="muted small">{t('finance.shortfallNote')}</p>
     </div>
   );

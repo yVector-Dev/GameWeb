@@ -60,7 +60,7 @@ export interface HousingDef {
 }
 
 export const HOUSING: Record<Housing, HousingDef> = {
-  family: { id: 'family', minAge: 0, rent: 0, living: 1500, happiness: 0, movingCost: 0 },
+  family: { id: 'family', minAge: 0, rent: 0, living: 4500, happiness: 0, movingCost: 0 },
   rent_small: { id: 'rent_small', minAge: 18, rent: 9000, living: 6000, happiness: 0, movingCost: 600 },
   rent_nice: { id: 'rent_nice', minAge: 18, rent: 18000, living: 8000, happiness: 2, movingCost: 900 },
   own: { id: 'own', minAge: 21, rent: 0, living: 7000, happiness: 3, movingCost: 1500 },

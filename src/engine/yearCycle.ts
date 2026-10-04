@@ -1,3 +1,4 @@
+import { HOUSING } from '../content/items';
 import { checkAchievements } from './achievements';
 import { processCareerYear, jobTitle } from './career';
 import { actionsForAge } from './character';
@@ -20,7 +21,7 @@ export const MAX_AGE = 115;
  */
 export function deathChance(age: number, health: number): number {
   if (age >= MAX_AGE) return 1;
-  const base = 0.0004 * Math.exp(0.088 * (age - 30));
+  const base = 0.0005 * Math.exp(0.088 * (age - 30));
   const factor = health >= 50 ? 1 - (health - 50) / 100 : 1 + Math.pow((50 - health) / 50, 2) * 6;
   let p = base * factor;
   if (health <= 5) p += 0.12;
@@ -73,6 +74,14 @@ function processNaturalStats(state: GameState, ctx: YearContext): void {
     if (rng.chance(0.5)) changeStat(state, 'knowledge', -1, ctx.deltas);
   }
 
+  // Use it or lose it: high attributes fade a little when neglected for a year.
+  if (age >= 13) {
+    const used = (...ids: string[]) => ids.some((id) => (ctx.prevCounts[id] ?? 0) > 0);
+    if (c.stats.knowledge > 70 && !used('study', 'read', 'skill') && !state.education.enrolled) changeStat(state, 'knowledge', -2, ctx.deltas);
+    if (c.stats.discipline > 70 && !used('study', 'exercise', 'chores', 'skill')) changeStat(state, 'discipline', -2, ctx.deltas);
+    if (c.stats.social > 70 && !used('socialize', 'volunteer') && (ctx.prevInteractions ?? 0) === 0) changeStat(state, 'social', -2, ctx.deltas);
+  }
+
   // Life circumstances shape happiness.
   if (age >= 18) {
     let mood = 0;
@@ -82,9 +91,8 @@ function processNaturalStats(state: GameState, ctx: YearContext): void {
     if (!close) mood -= 3;
     const partner = currentPartner(state);
     if (partner && partner.bond >= 70) mood += 2;
-    if (state.finance.housing === 'family' && age >= 28) mood -= 2;
-    if (state.finance.housing === 'rent_nice') mood += 2;
-    if (state.finance.housing === 'own') mood += 3;
+    if (state.finance.housing === 'family' && age >= 26) mood -= age >= 32 ? 4 : 2;
+    mood += HOUSING[state.finance.housing].happiness;
     if (mood !== 0) changeStat(state, 'happiness', mood, ctx.deltas);
   }
   const drift = Math.round((55 - c.stats.happiness) * 0.08);
@@ -116,7 +124,14 @@ export function ageUp(state: GameState): GameState {
     const check = canAgeUp(s);
     if (!check.ok) throw new EngineError((check.reason ?? 'error.gameOver').replace(/^error\./, ''));
 
-    const ctx: YearContext = { rng, deltas: [], income: [], expenses: [], prevCounts: { ...s.actions.counts } };
+    const ctx: YearContext = {
+      rng,
+      deltas: [],
+      income: [],
+      expenses: [],
+      prevCounts: { ...s.actions.counts },
+      prevInteractions: Object.values(s.actions.npcCounts).reduce((a, b) => a + b, 0),
+    };
     s.character.age += 1;
     s.year += 1;
     s.actions = { used: 0, max: actionsForAge(s.character.age), counts: {}, npcCounts: {} };

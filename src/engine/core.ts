@@ -97,6 +97,17 @@ export function changeStat(state: GameState, stat: StatKey, amount: number, delt
   return real;
 }
 
+/**
+ * Softens gains for attributes that are already high, so reaching the top
+ * takes sustained effort instead of a few years of repetition.
+ */
+export function softGain(current: number, amount: number): number {
+  if (amount <= 0) return amount;
+  const factor = current <= 40 ? 1 : Math.max(0.25, 1 - (current - 40) / 80);
+  const value = Math.round(amount * factor);
+  return value < 1 && current < 95 ? 1 : value;
+}
+
 export function changeMoney(state: GameState, amount: number, deltas?: Delta[]): void {
   const value = Math.round(amount);
   state.character.money += value;

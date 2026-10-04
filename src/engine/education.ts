@@ -10,6 +10,7 @@ import {
   livingNpcs,
   setFeedback,
   setFlag,
+  softGain,
   transition,
 } from './core';
 import type { YearContext } from './context';
@@ -22,6 +23,12 @@ export const SCHOOL_YEARS = 12;
 export const SCHOOL_PASS_MARK = 30;
 export const MAX_SCHOOL_REPEATS = 2;
 export const LICENSE_COST = 300;
+/** Student loans stop being granted above this balance. */
+export const STUDENT_LOAN_LIMIT = 60000;
+
+export function canBorrowForStudies(state: GameState): boolean {
+  return state.finance.studentDebt < STUDENT_LOAN_LIMIT;
+}
 
 /** Interests discovered as a teenager make related courses a bit easier. */
 const COURSE_INTEREST: Record<string, string> = {
@@ -103,7 +110,7 @@ export function processEducationYear(state: GameState, ctx: YearContext): void {
   const rng = ctx.rng;
 
   if (c.age <= 5) {
-    changeStat(state, 'knowledge', 3, ctx.deltas);
+    changeStat(state, 'knowledge', 2, ctx.deltas);
     changeStat(state, 'social', 2, ctx.deltas);
     changeStat(state, 'discipline', 1, ctx.deltas);
   }
@@ -116,7 +123,7 @@ export function processEducationYear(state: GameState, ctx: YearContext): void {
   } else if (isInSchool(state)) {
     const yearPerf = clamp(Math.round(e.performance * 0.5 + schoolBase(state) * 0.5 + rng.int(-5, 5)));
     e.performance = yearPerf;
-    changeStat(state, 'knowledge', Math.round(1 + yearPerf / 30), ctx.deltas);
+    changeStat(state, 'knowledge', softGain(state.character.stats.knowledge, Math.max(1, Math.round(yearPerf / 35))), ctx.deltas);
     changeStat(state, 'discipline', 1, ctx.deltas);
     changeStat(state, 'social', 1, ctx.deltas);
     if (yearPerf < SCHOOL_PASS_MARK && e.repeats < MAX_SCHOOL_REPEATS) {
@@ -152,6 +159,8 @@ function processCourseYear(state: GameState, ctx: YearContext): void {
   // Tuition for the year just studied.
   const bill = tuitionFor(state, enrollment);
   if (bill.student > 0) {
+    // Over the loan limit, the rest of the course is paid from savings.
+    if (enrollment.funding === 'loan' && !canBorrowForStudies(state)) enrollment.funding = 'savings';
     if (enrollment.funding === 'loan') {
       state.finance.studentDebt += bill.student;
       ctx.expenses.push({ key: 'ledger.tuitionLoan', params: { course: courseName }, amount: 0 });
@@ -165,7 +174,7 @@ function processCourseYear(state: GameState, ctx: YearContext): void {
   enrollment.performance = perf;
   if (perf >= course.passMark) {
     enrollment.yearsDone += 1;
-    changeStat(state, 'knowledge', 2, ctx.deltas);
+    changeStat(state, 'knowledge', softGain(state.character.stats.knowledge, 2), ctx.deltas);
     if (enrollment.yearsDone >= course.years) {
       completeCourse(state, course, ctx.deltas);
     } else {
@@ -193,7 +202,7 @@ function completeCourse(state: GameState, course: CourseDef, deltas: Delta[]): v
   if (!e.completed.includes(course.id)) e.completed.push(course.id);
   for (const stat of STAT_KEYS) {
     const amount = course.reward[stat];
-    if (amount) changeStat(state, stat, amount, deltas);
+    if (amount) changeStat(state, stat, softGain(state.character.stats[stat], amount), deltas);
   }
   if (course.kind === 'adult') {
     e.diploma = true;
@@ -232,6 +241,7 @@ export function enrollCourse(state: GameState, courseId: string, funding: Fundin
     const availability = courseAvailability(s, courseId);
     if (!availability.available) throw new EngineError(availability.reason ?? 'requirements');
     if (funding === 'family' && familyTuitionShare(s) === 0) throw new EngineError('noFamilyHelp');
+    if (funding === 'loan' && !canBorrowForStudies(s)) throw new EngineError('loanLimit', { amount: { money: STUDENT_LOAN_LIMIT } });
     const course = availability.course;
     const scholarship = course.kind === 'university' ? s.education.scholarship : 0;
     const enrollment: Enrollment = {

@@ -271,7 +271,7 @@ export default {
     vacation: { name: 'Vacaciones', desc: 'Una semana fuera. Una vez al año.', log: 'Te fuiste de vacaciones y volviste con energía renovada.' },
   },
   housing: {
-    family: { name: 'Casa familiar', desc: 'Barata, pero a partir de los 28 empieza a pesar.' },
+    family: { name: 'Casa familiar', desc: 'Ayudas con los gastos; a partir de los 26 empieza a pesar.' },
     rent_small: { name: 'Piso pequeño de alquiler', desc: 'Tu propio espacio con poco presupuesto.' },
     rent_nice: { name: 'Piso cómodo de alquiler', desc: 'Una comodidad que mejora el ánimo cada año.' },
     own: { name: 'Casa propia', desc: 'Comprada con hipoteca. Gana valor con el tiempo.' },
@@ -283,6 +283,8 @@ export default {
   },
   ledger: {
     salary: 'Sueldo: {job}',
+    lifestyle: 'Estilo de vida',
+    support: 'Ayuda social',
     pension: 'Pensión',
     familyGift: 'Regalo familiar',
     tax: 'Impuesto sobre la renta',
@@ -301,7 +303,7 @@ export default {
     graduate: { name: 'Toga y Birrete', desc: 'Termina un grado universitario.' },
     masters: { name: 'Un Paso Más', desc: 'Termina un máster.' },
     second_chance: { name: 'Segunda Oportunidad', desc: 'Obtén el título para personas adultas tras dejar la escuela.' },
-    top_of_ladder: { name: 'En la Cima', desc: 'Alcanza el nivel más alto de una carrera.' },
+    top_of_ladder: { name: 'En la Cima', desc: 'Alcanza el nivel más alto de una carrera de cuatro niveles o más.' },
     dream_job: { name: 'Sueño de Infancia', desc: 'Trabaja en el campo con el que soñabas en la infancia.' },
     entrepreneur: { name: 'Espíritu Emprendedor', desc: 'Convierte un negocio en un éxito.' },
     millionaire: { name: 'Siete Cifras', desc: 'Ten 1.000.000 ¤ en ahorros.' },
@@ -418,6 +420,7 @@ export default {
     finance: {
       gift: 'Tu familia te dio {amount} para ayudarte a empezar la vida adulta.',
       year: 'El año en dinero: ingresos {income}, gastos {expenses}, resultado {net}.',
+      bankruptcy: 'Tus deudas de {amount} no se podían pagar. Te declaraste en quiebra: la deuda desaparece, pero tu reputación se resiente.',
       shortfall: 'Tus ahorros no cubrieron los gastos. {amount} se convirtió en deuda al 12 %.',
       debtCleared: 'Saldaste toda tu deuda de consumo.',
       mortgagePaid: '¡Terminaste de pagar la hipoteca! La casa es completamente tuya.',
@@ -539,6 +542,7 @@ export default {
     requirements: 'No cumples los requisitos.',
     noFamilyHelp: 'Tu familia no puede ayudar con la matrícula.',
     notEnoughMoneyTuition: 'Necesitas {amount} para este año de matrícula.',
+    loanLimit: 'Los préstamos estudiantiles tienen un límite de {amount} de deuda.',
     notEnrolled: 'No estás en ningún curso.',
     alreadyLicensed: 'Ya tienes licencia.',
     notEnoughMoney: 'Dinero insuficiente.',

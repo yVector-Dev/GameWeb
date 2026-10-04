@@ -197,7 +197,7 @@ function applyEffect(state: GameState, effect: Effect, ctx: EffectContext): void
       job.yearsInLevel = 0;
       state.career.bestLevel[job.careerId] = Math.max(state.career.bestLevel[job.careerId] ?? 0, job.level);
       addCounter(state, 'promotions');
-      if (job.level === career.levels.length - 1) setFlag(state, 'top_of_ladder');
+      if (job.level === career.levels.length - 1 && career.levels.length >= 4) setFlag(state, 'top_of_ladder');
       addLog(state, 'log.job.promoted', { tone: 'milestone', params: { job: jobTitle(job.careerId, job.level, state) } });
       break;
     }

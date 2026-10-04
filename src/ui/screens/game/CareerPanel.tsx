@@ -5,12 +5,14 @@ import { applyForJob, dropCourse, enrollCourse, quitJob, retire, takeLicenseTest
 import { checkApplication, currentSalary, isPartTime, jobTitle, pensionFor, promotionStatus, RETIREMENT_MIN_AGE } from '../../../engine/career';
 import { describeRequirements } from '../../../engine/conditions';
 import {
+  canBorrowForStudies,
   courseAvailability,
   familyTuitionShare,
   isInSchool,
   LICENSE_COST,
   licenseChance,
   SCHOOL_PASS_MARK,
+  STUDENT_LOAN_LIMIT,
   tuitionFor,
 } from '../../../engine/education';
 import type { Funding, GameState } from '../../../engine/types';
@@ -161,7 +163,7 @@ function FundingOptions({ game, courseId, onPick }: { game: GameState; courseId:
   const options: { funding: Funding; label: string; share: number; disabled: boolean }[] = [
     { funding: 'savings', label: t('edu.fundSavings'), share: tuitionFor(game, { courseId, funding: 'savings', scholarship }).student, disabled: false },
     { funding: 'family', label: t('edu.fundFamily', { pct: pct(familyShare) }), share: tuitionFor(game, { courseId, funding: 'family', scholarship }).student, disabled: familyShare === 0 },
-    { funding: 'loan', label: t('edu.fundLoan'), share: 0, disabled: false },
+    { funding: 'loan', label: t('edu.fundLoan'), share: 0, disabled: !canBorrowForStudies(game) },
   ];
   return (
     <>
@@ -176,7 +178,11 @@ function FundingOptions({ game, courseId, onPick }: { game: GameState; courseId:
                 <span className="choice__meta">
                   <span className="chip chip--cost">{t('common.perYear', { amount: { money: o.funding === 'loan' ? tuitionFor(game, { courseId, funding: 'loan', scholarship }).student : o.share } })}</span>
                   {tooPoor && <span className="chip chip--bad">{t('error.notEnoughMoney')}</span>}
-                  {o.disabled && <span className="chip chip--bad">{t('error.noFamilyHelp')}</span>}
+                  {o.disabled && (
+                    <span className="chip chip--bad">
+                      {o.funding === 'loan' ? t('error.loanLimit', { amount: { money: STUDENT_LOAN_LIMIT } }) : t('error.noFamilyHelp')}
+                    </span>
+                  )}
                 </span>
               </button>
             </li>

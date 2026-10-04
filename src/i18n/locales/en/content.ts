@@ -136,7 +136,7 @@ export default {
     vacation: { name: 'Vacation', desc: 'A week away. Once per year.', log: 'You took a vacation and came back rested.' },
   },
   housing: {
-    family: { name: 'Family home', desc: 'Cheap, but after 28 it starts to weigh on you.' },
+    family: { name: 'Family home', desc: 'You chip in for the bills; from 26 on, it starts to weigh on you.' },
     rent_small: { name: 'Small rented apartment', desc: 'Your own space on a budget.' },
     rent_nice: { name: 'Nice rented apartment', desc: 'Comfort that lifts your mood each year.' },
     own: { name: 'Your own home', desc: 'Bought with a mortgage. Gains value over time.' },
@@ -148,6 +148,8 @@ export default {
   },
   ledger: {
     salary: 'Salary: {job}',
+    lifestyle: 'Lifestyle',
+    support: 'Social support',
     pension: 'Pension',
     familyGift: 'Family gift',
     tax: 'Income tax',
@@ -166,7 +168,7 @@ export default {
     graduate: { name: 'Cap and Gown', desc: 'Complete a university degree.' },
     masters: { name: 'Going Further', desc: "Complete a master's degree." },
     second_chance: { name: 'Second Chance', desc: 'Earn an adult diploma after leaving school.' },
-    top_of_ladder: { name: 'Top of the Ladder', desc: 'Reach the highest level of a career.' },
+    top_of_ladder: { name: 'Top of the Ladder', desc: 'Reach the highest level of a career with four or more levels.' },
     dream_job: { name: 'Childhood Dream', desc: 'Work in the field you dreamed of as a child.' },
     entrepreneur: { name: 'Entrepreneur', desc: 'Turn a venture into a success.' },
     millionaire: { name: 'Seven Figures', desc: 'Hold ¤1,000,000 in savings.' },
@@ -283,6 +285,7 @@ export default {
     finance: {
       gift: 'Your family gave you {amount} to help you start adult life.',
       year: 'Year in money: income {income}, expenses {expenses}, net {net}.',
+      bankruptcy: 'Your debts of {amount} could not be repaid. You declared bankruptcy: the debt is gone, but your reputation suffers.',
       shortfall: 'Your savings could not cover your costs. {amount} became debt at 12% interest.',
       debtCleared: 'You paid off all your consumer debt.',
       mortgagePaid: 'You paid off your mortgage. The house is fully yours!',
@@ -404,6 +407,7 @@ export default {
     requirements: 'You do not meet the requirements.',
     noFamilyHelp: 'Your family cannot help with tuition.',
     notEnoughMoneyTuition: 'You need {amount} for this year of tuition.',
+    loanLimit: 'Student loans are capped at {amount} of debt.',
     notEnrolled: 'You are not enrolled in any course.',
     alreadyLicensed: 'You already have a license.',
     notEnoughMoney: 'Not enough money.',

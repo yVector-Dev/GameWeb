@@ -88,6 +88,33 @@ describe('yearly finances', () => {
     expect(() => buyItem(bought, 'computer')).toThrowError(EngineError);
   });
 
+  it('never lets debt run away, even for someone who never works', () => {
+    let s = newGame(77);
+    for (let i = 0; i < 90 && s.alive; i++) {
+      s = structuredClone(advance(s, 1));
+      s.character.stats.health = 100; // keep the life going for the test
+      s.career.job = null;
+    }
+    expect(s.finance.debt).toBeLessThan(60000);
+    const ledger = s.finance.lastLedger!;
+    expect(ledger.lines.some((l) => l.key === 'ledger.support' || l.key === 'ledger.pension')).toBe(true);
+  });
+
+  it('declares bankruptcy only as a last resort, with a reputation cost', () => {
+    const s = employedAdult();
+    s.career.job = null;
+    s.finance.housing = 'family';
+    s.character.money = 0;
+    s.finance.debt = 90000;
+    s.finance.debtYears = 5;
+    const reputation = s.character.stats.reputation;
+    s.character.age += 1;
+    processFinanceYear(s, ctx());
+    expect(s.finance.debt).toBe(0);
+    expect(s.flags.bankrupt).toBeDefined();
+    expect(s.character.stats.reputation).toBeLessThan(reputation);
+  });
+
   it('minors pay no living costs', () => {
     const s = structuredClone(newGame(4));
     s.character.age = 10;

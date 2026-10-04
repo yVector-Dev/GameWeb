@@ -10,6 +10,7 @@ import {
   clamp,
   livingNpcs,
   setFeedback,
+  softGain,
   transition,
 } from './core';
 import { isInSchool } from './education';
@@ -70,7 +71,7 @@ export function previewGains(state: GameState, def: ActivityDef): Partial<Record
   for (const stat of STAT_KEYS) {
     const base = def.gains[stat];
     if (base === undefined) continue;
-    out[stat] = base > 0 ? Math.max(1, Math.round(base * factor * mult)) : base;
+    out[stat] = base > 0 ? softGain(state.character.stats[stat], Math.max(1, Math.round(base * factor * mult))) : base;
   }
   return out;
 }

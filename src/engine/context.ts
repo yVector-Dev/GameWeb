@@ -10,4 +10,6 @@ export interface YearContext {
   expenses: LedgerLine[];
   /** Activity usage of the year that just ended. */
   prevCounts: Record<string, number>;
+  /** Number of interactions with people in the year that just ended. */
+  prevInteractions?: number;
 }

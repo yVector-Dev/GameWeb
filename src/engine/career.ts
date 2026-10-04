@@ -170,7 +170,7 @@ export function retire(state: GameState): GameState {
 export function pensionFor(state: GameState): number {
   let pension = 0;
   if (state.career.retired) {
-    const share = Math.min(0.6, state.career.yearsWorked * 0.01);
+    const share = Math.min(0.5, state.career.yearsWorked * 0.0125);
     pension += Math.round(state.career.lastSalary * share);
   }
   if (state.character.age >= STATE_PENSION_AGE) pension += STATE_PENSION;
@@ -183,7 +183,9 @@ export function jobBasePerformance(state: GameState): number {
   const career = getCareer(job.careerId);
   const s = state.character.stats;
   const traits = state.character.traits;
-  let base = s.discipline * 0.35 + s[career.keyStat] * 0.4 + s.happiness * 0.15 + 10;
+  // Attributes set a baseline; staying at the top also takes regular skill
+  // practice (the "Develop professional skills" activity).
+  let base = s.discipline * 0.3 + s[career.keyStat] * 0.3 + s.happiness * 0.1 + 15;
   if (traits.includes('diligent')) base += 5;
   if (traits.includes('ambitious')) base += 4;
   if (traits.includes('anxious')) base -= 3;
@@ -252,7 +254,7 @@ export function processCareerYear(state: GameState, ctx: YearContext): void {
       changeStat(state, 'reputation', 3, deltas);
       changeStat(state, 'happiness', 5, deltas);
       addLog(state, 'log.job.promoted', { tone: 'milestone', params: { job: jobTitle(job.careerId, job.level, state) }, deltas });
-      if (job.level === career.levels.length - 1) setFlag(state, 'top_of_ladder');
+      if (job.level === career.levels.length - 1 && career.levels.length >= 4) setFlag(state, 'top_of_ladder');
     } else if (c.traits.includes('ambitious')) {
       changeStat(state, 'happiness', -2, ctx.deltas);
     }

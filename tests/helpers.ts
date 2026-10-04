@@ -6,6 +6,7 @@ import {
   choiceViews,
   createNewGame,
   enrollCourse,
+  findPartner,
   interact,
   listActivities,
   performActivity,
@@ -70,6 +71,14 @@ export function playYear(state: GameState, rng: Rng): GameState {
   if (s.character.age >= 16 && !s.career.job && !s.career.retired) {
     const open = CAREERS.filter((c) => checkApplication(s, c.id).ok);
     if (open.length > 0) tryOp((g) => applyForJob(g, rng.pick(open).id));
+  }
+  // Look after a partner first: date, propose, start a family.
+  const partner = s.npcs.find((n) => n.alive && (n.relation === 'partner' || n.relation === 'spouse'));
+  if (partner) {
+    const romance = interactionsFor(s, partner).filter((v) => v.available && ['propose', 'date', 'tryChild'].includes(v.id));
+    if (romance.length > 0) tryOp((g) => interact(g, partner.id, romance[0].id));
+  } else if (s.character.age >= 20 && s.character.age <= 50 && rng.chance(0.3)) {
+    tryOp(findPartner);
   }
   const people = s.npcs.filter((n) => n.alive);
   if (people.length > 0 && rng.chance(0.7)) {

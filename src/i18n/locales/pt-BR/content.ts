@@ -253,7 +253,7 @@ export default {
     vacation: { name: 'Viagem de férias', desc: 'Uma semana fora. Uma vez por ano.', log: 'Você tirou férias e voltou com as energias renovadas.' },
   },
   housing: {
-    family: { name: 'Casa da família', desc: 'Barata, mas depois dos 28 começa a pesar.' },
+    family: { name: 'Casa da família', desc: 'Você ajuda nas contas; a partir dos 26, começa a pesar.' },
     rent_small: { name: 'Apartamento pequeno alugado', desc: 'Seu próprio canto, com orçamento apertado.' },
     rent_nice: { name: 'Apartamento confortável alugado', desc: 'Um conforto que melhora o humor todo ano.' },
     own: { name: 'Casa própria', desc: 'Comprada com financiamento. Valoriza com o tempo.' },
@@ -265,6 +265,8 @@ export default {
   },
   ledger: {
     salary: 'Salário: {job}',
+    lifestyle: 'Estilo de vida',
+    support: 'Auxílio social',
     pension: 'Aposentadoria',
     familyGift: 'Presente da família',
     tax: 'Imposto de renda',
@@ -283,7 +285,7 @@ export default {
     graduate: { name: 'Beca e Capelo', desc: 'Conclua uma graduação.' },
     masters: { name: 'Indo Além', desc: 'Conclua um mestrado.' },
     second_chance: { name: 'Segunda Chance', desc: 'Obtenha o diploma pelo supletivo depois de sair da escola.' },
-    top_of_ladder: { name: 'Topo da Escada', desc: 'Chegue ao nível mais alto de uma carreira.' },
+    top_of_ladder: { name: 'Topo da Escada', desc: 'Chegue ao nível mais alto de uma carreira com quatro níveis ou mais.' },
     dream_job: { name: 'Sonho de Infância', desc: 'Trabalhe na área com que você sonhava na infância.' },
     entrepreneur: { name: 'Empreendedorismo', desc: 'Transforme um negócio em sucesso.' },
     millionaire: { name: 'Sete Dígitos', desc: 'Tenha ¤ 1.000.000 em economias.' },
@@ -400,6 +402,7 @@ export default {
     finance: {
       gift: 'Sua família deu {amount} para ajudar no começo da vida adulta.',
       year: 'O ano em dinheiro: receitas {income}, despesas {expenses}, resultado {net}.',
+      bankruptcy: 'Suas dívidas de {amount} não puderam ser pagas. Você declarou falência: a dívida acabou, mas sua reputação sofre.',
       shortfall: 'Suas economias não cobriram os custos. {amount} virou dívida com juros de 12%.',
       debtCleared: 'Você quitou toda a dívida de consumo.',
       mortgagePaid: 'Você quitou o financiamento. A casa é totalmente sua!',
@@ -521,6 +524,7 @@ export default {
     requirements: 'Você não cumpre os requisitos.',
     noFamilyHelp: 'Sua família não pode ajudar com as mensalidades.',
     notEnoughMoneyTuition: 'Você precisa de {amount} para este ano de mensalidades.',
+    loanLimit: 'O crédito estudantil tem limite de {amount} em dívida.',
     notEnrolled: 'Você não está em nenhum curso.',
     alreadyLicensed: 'Você já tem carteira.',
     notEnoughMoney: 'Dinheiro insuficiente.',

@@ -36,6 +36,7 @@ describe('a complete life', () => {
       expect(s.death!.age).toBeGreaterThan(0);
       expect(s.death!.age).toBeLessThanOrEqual(115);
       expect(s.pending).toBeNull();
+      expect(s.finance.debt).toBeLessThan(200000);
       ages.push(s.death!.age);
 
       const summary = buildSummary(s);

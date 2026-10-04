@@ -33,6 +33,13 @@ import type { Delta, GameState, Housing, LedgerLine } from './types';
 import { STAT_KEYS } from './types';
 
 export const GIFT_AT_18 = { struggling: 0, modest: 1000, comfortable: 5000, wealthy: 20000 } as const;
+/** Minimum yearly income guaranteed to adults (a simple social safety net). */
+export const SOCIAL_SUPPORT = 4000;
+/** Share of net income above LIFESTYLE_THRESHOLD spent on a higher standard of living. */
+export const LIFESTYLE_SHARE = 0.4;
+export const LIFESTYLE_THRESHOLD = 15000;
+/** Years between possible bankruptcies. */
+export const BANKRUPTCY_COOLDOWN = 7;
 
 /** Progressive income tax used for salary and pension. */
 export function incomeTax(gross: number): number {
@@ -115,9 +122,16 @@ export function processFinanceYear(state: GameState, ctx: YearContext): boolean 
   }
 
   const taxable = income.filter((l) => l.key === 'ledger.salary' || l.key === 'ledger.pension').reduce((a, l) => a + l.amount, 0);
+  // Adults with little or no income receive a basic, untaxed top-up.
+  if (c.age >= 18 && taxable < SOCIAL_SUPPORT) {
+    income.push({ key: 'ledger.support', amount: SOCIAL_SUPPORT - taxable });
+  }
   const expenses: LedgerLine[] = [...ctx.expenses];
   const tax = incomeTax(taxable);
   if (tax > 0) expenses.push({ key: 'ledger.tax', amount: tax });
+  // Higher incomes come with higher everyday spending.
+  const lifestyle = c.age >= 18 ? Math.round(LIFESTYLE_SHARE * Math.max(0, taxable - tax - LIFESTYLE_THRESHOLD)) : 0;
+  if (lifestyle > 0) expenses.push({ key: 'ledger.lifestyle', amount: lifestyle });
 
   // Student loan: interest accrues; repayments start after studies.
   if (f.studentDebt > 0) {
@@ -214,6 +228,19 @@ function applyDebtPressure(state: GameState, yearlyIncome: number): void {
   if (f.housing === 'rent_small' && livingNpcs(state, 'parent').length > 0) {
     f.housing = 'family';
     addLog(state, 'log.finance.movedHome', { tone: 'bad' });
+    return;
+  }
+  // Nothing left to sell: as a last resort the debt is discharged, at a cost.
+  const last = state.counters.lastBankruptcyAge;
+  if (f.debtYears >= 4 && (last === undefined || state.character.age - last >= BANKRUPTCY_COOLDOWN)) {
+    const amount = f.debt;
+    f.debt = 0;
+    f.debtYears = 0;
+    state.counters.lastBankruptcyAge = state.character.age;
+    setFlag(state, 'bankrupt');
+    changeStat(state, 'reputation', -10);
+    changeStat(state, 'happiness', -8);
+    addLog(state, 'log.finance.bankruptcy', { tone: 'bad', params: { amount: { money: amount } } });
   }
 }
 
