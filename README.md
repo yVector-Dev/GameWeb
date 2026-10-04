@@ -12,6 +12,15 @@ Abra o arquivo **`jogar/index.html`** no navegador (duplo clique). Ele é autoco
 
 Para regenerar esse arquivo depois de mudar o código: `npm run build:single`.
 
+## Publicar no GitHub Pages
+
+Duas opções, ambas sem servidor:
+
+- **Mais simples (sem Actions):** em *Settings → Pages*, escolha *Deploy from a branch*, a branch `main` e a pasta **`/docs`**. A pasta `docs/` já contém o jogo em arquivo único.
+- **Automática:** em *Settings → Pages*, escolha *Source: GitHub Actions*. O workflow `.github/workflows/pages.yml` roda os testes, gera o build e publica a cada push na `main`.
+
+Depois de alterar o código na primeira opção, rode `npm run build:single` para atualizar `docs/index.html`.
+
 ## Requisitos
 
 - Node.js 20.19+ ou 22.12+ (testado com Node 22)

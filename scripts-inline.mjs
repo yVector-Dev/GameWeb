@@ -18,5 +18,8 @@ for (const file of assets) {
 const icon = readFileSync(join(dist, 'favicon.svg'), 'utf8');
 html = html.replace(/<link rel="icon"[^>]*>/, `<link rel="icon" href="data:image/svg+xml,${encodeURIComponent(icon)}" />`);
 mkdirSync('jogar', { recursive: true });
+mkdirSync('docs', { recursive: true });
+writeFileSync(join('docs', 'index.html'), html);
+writeFileSync(join('docs', '.nojekyll'), '');
 writeFileSync(join('jogar', 'index.html'), html);
 console.log(`jogar/index.html written (${Math.round(html.length / 1024)} kB)`);
