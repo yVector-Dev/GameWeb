@@ -433,6 +433,7 @@ export default {
       breakup: 'Você e {name} foram se distanciando e terminaram.',
       divorce: 'Seu casamento com {name} terminou em divórcio. Custou {amount}.',
       conflict: 'A tensão está crescendo entre você e {name} ({rel}).',
+      reconciled: 'O tempo curou o desentendimento entre você e {name}.',
     },
     pet: {
       died: '{name}, sua companhia fiel, morreu aos {age} anos.',

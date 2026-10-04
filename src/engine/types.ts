@@ -249,7 +249,7 @@ export interface EventRecord {
 }
 
 export interface Feedback {
-  /** Translation key of a short heading, e.g. "feedback.activity". */
+  /** Translation key of a short heading, e.g. "feedback.enrolled". */
   titleKey: string;
   titleParams?: Params;
   /** Optional narrative result. */
@@ -408,6 +408,8 @@ export interface ChoiceDef {
 export interface NpcBinding {
   relation: RelationKind | RelationKind[];
   tag?: string;
+  /** Excludes people already marked with this tag (e.g. a decision already made about them). */
+  notTag?: string;
   minBond?: number;
   maxBond?: number;
   minNpcAge?: number;

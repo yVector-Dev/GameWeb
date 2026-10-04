@@ -1575,3 +1575,8 @@ details > summary.subsection-title {
   transition-duration: 1ms !important;
   scroll-behavior: auto !important;
 }
+
+.badge + .badge,
+.muted .badge {
+  margin-left: 6px;
+}

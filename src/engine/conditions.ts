@@ -12,6 +12,7 @@ export function npcMatches(state: GameState, npc: NPC, filter: Omit<NpcBinding, 
   const relations = Array.isArray(filter.relation) ? filter.relation : [filter.relation];
   if (!relations.includes(npc.relation)) return false;
   if (filter.tag && !npc.tags.includes(filter.tag)) return false;
+  if (filter.notTag && npc.tags.includes(filter.notTag)) return false;
   if (filter.minBond !== undefined && npc.bond < filter.minBond) return false;
   if (filter.maxBond !== undefined && npc.bond > filter.maxBond) return false;
   const age = npcAge(state, npc);

@@ -24,6 +24,7 @@ import {
   schoolPerf,
   social,
   statMin,
+  tag,
   trait,
   unflag,
 } from './helpers';
@@ -628,11 +629,13 @@ export const ADULT_EVENTS: EventDef[] = [
     maxAge: 75,
     weight: 12,
     maxTimes: 3,
-    npc: { relation: 'child', minNpcAge: 17, maxNpcAge: 19 },
+    cooldown: 1,
+    // Each child gets this decision once.
+    npc: { relation: 'child', minNpcAge: 17, maxNpcAge: 19, notTag: 'college_decided' },
     choices: [
-      { id: 'pay', cost: 20000, effects: [bond('event', 15), happy(4)] },
-      { id: 'half', cost: 8000, effects: [bond('event', 8)] },
-      { id: 'own_way', effects: [bond('event', -3)] },
+      { id: 'pay', cost: 20000, effects: [bond('event', 15), happy(4), tag('college_decided')] },
+      { id: 'half', cost: 8000, effects: [bond('event', 8), tag('college_decided')] },
+      { id: 'own_way', effects: [bond('event', -3), tag('college_decided')] },
     ],
   },
   { id: 'lottery_scratch', minAge: 18, maxAge: 95, weight: 2, tone: 'good', effects: [money(500), happy(3)] },

@@ -451,6 +451,7 @@ export default {
       breakup: 'Tú y {name} se fueron distanciando y terminaron.',
       divorce: 'Tu matrimonio con {name} terminó en divorcio. Costó {amount}.',
       conflict: 'Crece la tensión entre tú y {name} ({rel}).',
+      reconciled: 'El tiempo curó la distancia entre tú y {name}.',
     },
     pet: {
       died: '{name}, tu fiel compañía, murió a los {age} años.',

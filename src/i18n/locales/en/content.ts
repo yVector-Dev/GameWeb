@@ -316,6 +316,7 @@ export default {
       breakup: 'You and {name} grew apart and broke up.',
       divorce: 'Your marriage with {name} ended in divorce. It cost you {amount}.',
       conflict: 'Tension is building between you and {name} ({rel}).',
+      reconciled: 'Time healed the rift between you and {name}.',
     },
     pet: {
       died: '{name}, your faithful companion, died at {age}.',

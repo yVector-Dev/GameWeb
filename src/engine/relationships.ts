@@ -421,10 +421,18 @@ export function processRelationshipsYear(state: GameState, ctx: YearContext): vo
     let decay = 0;
     if (neglected) {
       decay = DECAY[npc.relation] ?? 3;
-      if (npc.relation === 'parent' && c.age < 18) decay = 1;
+      // Living under the same roof keeps family close.
+      if (c.age < 18 && (npc.relation === 'parent' || npc.relation === 'sibling')) decay = 1;
       if (npc.relation === 'child' && npcAge(state, npc) >= 18) decay = 3;
     }
-    if (npc.conflict) decay += 4;
+    if (npc.conflict) {
+      decay += 3;
+      // Time heals some rifts on its own.
+      if (rng.chance(0.25)) {
+        npc.conflict = false;
+        addLog(state, 'log.npc.reconciled', { tone: 'good', params: { name: npc.firstName } });
+      }
+    }
     if (decay > 0) npc.bond = clamp(npc.bond - decay);
 
     if (npc.relation === 'friend' && npc.bond < 12) {
@@ -455,7 +463,7 @@ export function processRelationshipsYear(state: GameState, ctx: YearContext): vo
   if (removed.length > 0) state.npcs = state.npcs.filter((n) => !removed.includes(n));
 
   // Occasional friction gives "resolve conflict" something to do.
-  if (c.age >= 8 && rng.chance(0.12)) {
+  if (c.age >= 10 && rng.chance(0.08)) {
     const candidates = livingNpcs(state, ['sibling', 'friend', 'parent', 'spouse', 'partner']).filter((n) => !n.conflict);
     if (candidates.length > 0) {
       const npc = rng.pick(candidates);
